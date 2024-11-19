@@ -250,6 +250,10 @@
 				display: none;
 			}
 
+			#method .bttn {
+				width: 33.33%;
+			}
+
 			/* small breakpoint */
 			@media (min-width: 640px) {
 				.header {
@@ -400,29 +404,11 @@
 				<div class="content__grid">
 					<div class="col-12-s6-m4" id="method">
 						<label class="input__label">上傳方式</label>
-						<div>
-							<button
-								data-value="upload"
-								id="computerButton"
-								class="bttn left fill active"
-							>
-								上傳
-							</button>
-							<button
-								data-value="url"
-								id="urlButton"
-								class="bttn fill"
-							>
-								URL
-							</button>
-							<button
-								data-value="camera"
-								id="cameraButton"
-								class="bttn right fill"
-							>
-								相機
-							</button>
-						</div>
+							<div class="flex">
+								<button data-value="upload" id="computerButton" class="bttn left fill active">上傳</button>
+								<button data-value="url" id="urlButton" class="bttn fill">URL</button>
+								<button data-value="camera" id="cameraButton" class="bttn right fill">相機</button>
+							</div>
 					</div>
 
 					<div class="col-12-m8" id="fileSelectionContainer">
