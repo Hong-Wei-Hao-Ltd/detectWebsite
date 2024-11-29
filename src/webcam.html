@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webcam Selector</title>
+</head>
+<body>
+
+  <h1>选择摄像头</h1>
+  
+  <!-- Dropdown to list available webcams -->
+  <select id="cameraSelect">
+    <option value="">请选择摄像头</option>
+  </select>
+  
+  <button id="startBtn">打开摄像头</button>
+  <button id="stopBtn" disabled>关闭摄像头</button>
+  
+  <video id="videoElement" width="640" height="480" autoplay></video>
+
+  <script>
+    let currentStream = null;
+    const cameraSelect = document.getElementById('cameraSelect');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const videoElement = document.getElementById('videoElement');
+
+    // Function to list all available cameras
+    async function listCameras() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const cameras = devices.filter(device => device.kind === 'videoinput');
+        
+        // Clear existing options
+        cameraSelect.innerHTML = '<option value="">请选择摄像头</option>';
+
+        cameras.forEach(device => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.textContent = device.label || `Camera ${cameraSelect.length + 1}`;
+          cameraSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error listing devices:', error);
+      }
+    }
+
+    // Function to start the selected camera
+    async function startCamera(deviceId) {
+      if (currentStream) {
+        stopCamera();
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { deviceId: { exact: deviceId } }
+        });
+
+        // Set the video element's srcObject to the stream
+        videoElement.srcObject = stream;
+        currentStream = stream;
+
+        // Disable the start button and enable the stop button
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+      } catch (error) {
+        console.error('Error starting camera:', error);
+      }
+    }
+
+    // Function to stop the camera
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+        currentStream = null;
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      }
+    }
+
+    // Handle camera selection change
+    cameraSelect.addEventListener('change', (event) => {
+      const deviceId = event.target.value;
+      if (deviceId) {
+        startCamera(deviceId);
+      }
+    });
+
+    // Start button click
+    startBtn.addEventListener('click', () => {
+      const deviceId = cameraSelect.value;
+      if (deviceId) {
+        startCamera(deviceId);
+      }
+    });
+
+    // Stop button click
+    stopBtn.addEventListener('click', stopCamera);
+
+    // List available cameras on page load
+    listCameras();
+  </script>
+
+</body>
+</html>
