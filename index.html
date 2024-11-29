@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta http-equiv="refresh" content="0; url=/src/test.html" />
-        <title>Redirecting...</title>
-        <script type="text/javascript">
-            window.location.href = "/src/test.html";
-        </script>
-    </head>
-    <body>
-        If you are not redirected automatically, follow this <a href="/src/test.html">link</a>.
-    </body>
+	<head>
+		<script type="text/javascript">
+			const redirectUrl = "/home/v2";
+			window.location.href = redirectUrl;
+		</script>
+		<meta http-equiv="refresh" content="0; url=/v1" />
+		<title>電阻識別器</title>
+	</head>
+	<body>
+		<h1>電阻識別器</h1>
+		<h3>
+			If you are not redirected automatically, follow this
+			<a
+				href="javascript:void(0);"
+				onclick="window.location.href=redirectUrl"
+				>link</a
+			>.
+		</h3>
+		<h3>
+			如果您沒有自動重定向，請點擊此
+			<a
+				href="javascript:void(0);"
+				onclick="window.location.href=redirectUrl"
+				>連結</a
+			>。
+		</h3>
+	</body>
 </html>

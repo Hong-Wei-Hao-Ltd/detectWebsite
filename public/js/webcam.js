@@ -89,7 +89,6 @@ function isIOSDevice() {
  */
 window.startCamera = async function (deviceId) {
   const videoElement = document.getElementById("webcam-video");
-  const canvasElement = document.getElementById("webcam-canvas");
   const startWebcamButton = document.getElementById("start-webcam");
 
   if (startWebcamButton.textContent.trim() === WebcamButtonText.STOP) {
@@ -123,9 +122,9 @@ window.startCamera = async function (deviceId) {
 
     const flip = deviceId === "user";
     if (isMobileDevice()) {
-      drawVideoFrameWithRAF(videoElement, canvasElement, flip);
+      drawVideoFrameWithRAF(videoElement, document.createElement("canvas"), flip);
     } else {
-      drawInterval = setInterval(() => drawVideoFrame(videoElement, canvasElement, flip), 1000 / 30); // 每秒30幀
+      drawInterval = setInterval(() => drawVideoFrame(videoElement, document.createElement("canvas"), flip), 1000 / 30); // 每秒30幀
     }
 
     const prtWebcamButton = document.getElementById("Prt-webcam");

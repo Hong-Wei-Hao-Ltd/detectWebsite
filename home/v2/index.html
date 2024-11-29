@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>test</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+			crossorigin="anonymous"
+		/>
+		<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+		<style>
+			#webcam-container {
+				max-width: 640px;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body onload="onOpenCvReady()" data-bs-theme="light">
+		<nav class="navbar bg-body-secondary">
+			<div class="container-fluid">
+				<h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
+				<button id="theme-toggle" class="btn btn-outline-secondary m-2 d-flex">
+					<span class="material-icons">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							fill="currentColor"
+							class="bi bi-brightness-high-fill"
+							viewBox="0 0 16 16"
+						>
+							<path
+								d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
+							/>
+						</svg>
+					</span>
+				</button>
+			</div>
+		</nav>
+		<section class="bg-body p-3">
+			<h3 class="h4">輸入</h3>
+			<div id="select" class="row pt-1">
+				<div class="col">
+					<h3 class="h6">使用方式：</h3>
+					<div
+						class="btn-group pb-2"
+						role="group"
+						aria-label="Basic radio toggle button group"
+					>
+						<input
+							type="radio"
+							class="btn-check"
+							name="btnradio"
+							id="btnradio1"
+							value="upload"
+							autocomplete="off"
+							checked
+						/>
+						<label class="btn btn-outline-primary" for="btnradio1"
+							>上傳照片</label
+						>
+
+						<input
+							type="radio"
+							class="btn-check"
+							name="btnradio"
+							id="btnradio2"
+							value="url"
+							autocomplete="off"
+						/>
+						<label class="btn btn-outline-primary" for="btnradio2"
+							>貼上照片網址</label
+						>
+
+						<input
+							type="radio"
+							class="btn-check"
+							name="btnradio"
+							id="btnradio3"
+							value="webcam"
+							autocomplete="off"
+						/>
+						<label class="btn btn-outline-primary" for="btnradio3"
+							>Webcam 攝影機</label
+						>
+					</div>
+					<div>
+						<!-- file -->
+						<div id="upload-form" style="display: none">
+							<input
+								type="file"
+								id="upload-input"
+								class="form-control"
+							/>
+						</div>
+
+						<!-- url -->
+						<div id="url-form" style="display: none">
+							<input
+								type="text"
+								id="url-input"
+								class="form-control"
+								placeholder="請輸入影像網址"
+							/>
+							<button
+								id="url-submit"
+								class="btn btn-primary form-control"
+							>
+								上傳
+							</button>
+						</div>
+						<!-- webcam -->
+						<div
+							id="webcam-input"
+							class="form-control"
+							style="display: none"
+						>
+							<select
+								id="webcam-select"
+								class="form-control mb-2"
+							>
+								<!-- 列出所有可用的 Webcam -->
+							</select>
+
+							<div id="webcam-container" style="display: none">
+								<video
+									id="webcam-video"
+									width="100%"
+									height="100%"
+									class="card mb-2"
+									autoplay
+									muted
+									playsinline
+								></video>
+							</div>
+
+							<button id="start-webcam" class="btn btn-success">
+									啟動Webcam
+							</button>
+							<button id="Prt-webcam" class="btn btn-primary">
+								拍照
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="bg-body p-3">
+			<h3 class="h4">預覽</h3>
+			<canvas id="main-canvas" class="border card"></canvas>
+		</section>
+		<section class="bg-body p-3">
+			<h3 class="h4">選項</h3>
+			<div id="s-confidenceRange" class="col-6-m3 relative">
+				<div class="form-control">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						fill="currentColor"
+						class="bi bi-check2-circle"
+						viewBox="0 0 16 16"
+					>
+						<path
+							d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0"
+						/>
+						<path
+							d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"
+						/>
+					</svg>
+					<label for="confidenceRange" class="form-label"
+						>最低信心度</label
+					>
+					<div class="input-group">
+						<div
+							style="width: 20%; position: relative"
+							class="pe-3"
+						>
+							<input
+								type="number"
+								class="form-control pe-3"
+								min="0"
+								max="100"
+								value="40"
+								id="confidenceNumber"
+								style="padding-right: 3.5rem"
+							/>
+							<span
+								class="icon"
+								style="
+									position: absolute;
+									right: 1.2rem;
+									top: 50%;
+									transform: translateY(-50%);
+									pointer-events: none;
+								"
+								>%</span
+							>
+						</div>
+						<input
+							type="range"
+							class="form-range"
+							min="0"
+							max="100"
+							step="5"
+							value="40"
+							id="confidenceRange"
+							style="width: 70%"
+						/>
+					</div>
+				</div>
+			</div>
+			<div id="s-overlapRange" class="col-6-m3 relative">
+				<div class="form-control">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						fill="currentColor"
+						class="bi bi-layers-fill"
+						viewBox="0 0 16 16"
+					>
+						<path
+							d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882z"
+						/>
+						<path
+							d="m2.125 8.567-1.86.992a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882l-1.86-.992-5.17 2.756a1.5 1.5 0 0 1-1.41 0z"
+						/>
+					</svg>
+					<label for="overlapRange" class="form-label"
+						>最大重疊率</label
+					>
+					<div class="input-group">
+						<div
+							style="width: 20%; position: relative"
+							class="pe-3"
+						>
+							<input
+								type="number"
+								class="form-control pe-3"
+								min="0"
+								max="100"
+								value="30"
+								id="overlapNumber"
+								style="padding-right: 3.5rem"
+							/>
+							<span
+								class="icon"
+								style="
+									position: absolute;
+									right: 1.2rem;
+									top: 50%;
+									transform: translateY(-50%);
+									pointer-events: none;
+								"
+								>%</span
+							>
+						</div>
+						<input
+							type="range"
+							class="form-range"
+							min="0"
+							max="100"
+							step="5"
+							value="30"
+							id="overlapRange"
+							style="width: 70%"
+						/>
+					</div>
+				</div>
+			</div>
+
+			<div id="s-lineWidthRange" class="col-6-m3 relative">
+				<div class="form-control">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						fill="currentColor"
+						class="bi bi-border-width"
+						viewBox="0 0 16 16"
+					>
+						<path
+							d="M0 3.5A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 5A.5.5 0 0 1 .5 8h15a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5"
+						/>
+					</svg>
+					<label for="lineWidthRange" class="form-label"
+						>線條寬度</label
+					>
+					<div class="input-group">
+						<div
+							style="width: 20%; position: relative"
+							class="pe-3"
+						>
+							<input
+								type="number"
+								class="form-control pe-3"
+								min="1"
+								max="10"
+								value="2"
+								id="lineWidthNumber"
+								style="padding-right: 3.5rem"
+							/>
+							<span
+								class="icon"
+								style="
+									position: absolute;
+									right: 1.2rem;
+									top: 50%;
+									transform: translateY(-50%);
+									pointer-events: none;
+								"
+								>px</span
+							>
+						</div>
+						<input
+							type="range"
+							class="form-range"
+							min="1"
+							max="10"
+							step="1"
+							value="2"
+							id="lineWidthRange"
+							style="width: 70%"
+						/>
+					</div>
+				</div>
+			</div>
+			<div id="s-label" class="col-6-m3 relative">
+				<div class="form-control">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						fill="currentColor"
+						class="bi bi-tags"
+						viewBox="0 0 16 16"
+					>
+						<path
+							d="M3 2v4.586l7 7L14.586 9l-7-7zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586z"
+						/>
+						<path
+							d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1z"
+						/>
+					</svg>
+					<label for="showLabel" class="form-label">顯示標籤</label>
+					<div class="form-check form-switch">
+						<input
+							class="form-check-input"
+							type="checkbox"
+							id="showLabel"
+							checked
+						/>
+						<label class="form-check-label" for="showLabel"></label>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="bg-body p-3">
+			<h3 class="h4">輸出</h3>
+			<button id="process-canvas" class="btn btn-primary">處理畫布</button>
+			<canvas id="result-canvas" class="border card"></canvas>
+		</section>
+
+		<script src="/public/js/main.js"></script>
+		<script src="/public/js/webcam.js"></script>
+		<script src="/public/js/options.js"></script>
+		<script src="/public/js/opencv.js"></script>
+		<script src="/public/js/roboflow.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>

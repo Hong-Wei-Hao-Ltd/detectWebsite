@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const overlapRange = document.getElementById("overlapRange");
   const overlapNumber = document.getElementById("overlapNumber");
 
+  const lineWidthRange = document.getElementById("lineWidthRange");
+  const lineWidthNumber = document.getElementById("lineWidthNumber");
+
   confidenceRange.addEventListener("input", function () {
     confidenceNumber.value = confidenceRange.value;
   });
@@ -19,5 +22,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   overlapNumber.addEventListener("input", function () {
     overlapRange.value = overlapNumber.value;
+  });
+
+  lineWidthRange.addEventListener("input", function () {
+    lineWidthNumber.value = lineWidthRange.value;
+  });
+
+  lineWidthNumber.addEventListener("input", function () {
+    lineWidthRange.value = lineWidthNumber.value;
   });
 });

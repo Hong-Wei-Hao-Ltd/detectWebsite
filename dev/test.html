@@ -138,7 +138,7 @@
 							</div>
 
 							<button id="start-webcam" class="btn btn-success">
-								啟動Webcam
+										啟動Webcam
 							</button>
 							<button id="Prt-webcam" class="btn btn-primary">
 								拍照
@@ -176,15 +176,31 @@
 						>最低信心度</label
 					>
 					<div class="input-group">
-						<input
-							type="number"
-							class="form-control me-2"
-							min="0"
-							max="100"
-							value="40"
-							id="confidenceNumber"
-							style="width: 10%"
-						/>
+						<div
+							style="width: 20%; position: relative"
+							class="pe-3"
+						>
+							<input
+								type="number"
+								class="form-control pe-3"
+								min="0"
+								max="100"
+								value="40"
+								id="confidenceNumber"
+								style="padding-right: 3.5rem"
+							/>
+							<span
+								class="icon"
+								style="
+									position: absolute;
+									right: 1.2rem;
+									top: 50%;
+									transform: translateY(-50%);
+									pointer-events: none;
+								"
+								>%</span
+							>
+						</div>
 						<input
 							type="range"
 							class="form-range"
@@ -219,15 +235,31 @@
 						>最大重疊率</label
 					>
 					<div class="input-group">
-						<input
-							type="number"
-							class="form-control me-2"
-							min="0"
-							max="100"
-							value="30"
-							id="overlapNumber"
-							style="width: 10%"
-						/>
+						<div
+							style="width: 20%; position: relative"
+							class="pe-3"
+						>
+							<input
+								type="number"
+								class="form-control pe-3"
+								min="0"
+								max="100"
+								value="30"
+								id="overlapNumber"
+								style="padding-right: 3.5rem"
+							/>
+							<span
+								class="icon"
+								style="
+									position: absolute;
+									right: 1.2rem;
+									top: 50%;
+									transform: translateY(-50%);
+									pointer-events: none;
+								"
+								>%</span
+							>
+						</div>
 						<input
 							type="range"
 							class="form-range"

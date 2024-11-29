@@ -1,7 +1,7 @@
 /**
  * 主要程式代碼
  */
-function onOpenCvReady() {
+document.addEventListener("DOMContentLoaded", function () {
   const startWebcamButton = document.getElementById("start-webcam");
   const themeToggleButton = document.getElementById("theme-toggle");
 
@@ -111,8 +111,8 @@ function onOpenCvReady() {
   // 初始化顯示
   updateInputDisplay();
   // window.getAndDisplayDevices();
-}
 
+});
 /**
  * 顯示圖像在畫布上
  * @param {string} src - 圖像來源URL
