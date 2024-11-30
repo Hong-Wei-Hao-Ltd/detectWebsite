@@ -60,7 +60,7 @@ function captureImage(videoElement) {
   let currentScale = 1;
 
   while (canvas.width * currentScale > maxWidth || canvas.height * currentScale > maxHeight) {
-    currentScale -= 0.05;
+    currentScale -= 0.005;
   }
 
   canvas.style.transformOrigin = "top left";

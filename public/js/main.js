@@ -132,7 +132,7 @@ function displayImage(src) {
     let currentScale = 1;
 
     while (canvas.width * currentScale > maxWidth || canvas.height * currentScale > maxHeight) {
-      currentScale -= 0.05;
+      currentScale -= 0.005;
     }
 
     canvas.style.width = `${canvas.width * currentScale}px`;

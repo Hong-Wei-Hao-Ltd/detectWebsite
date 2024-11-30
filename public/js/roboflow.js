@@ -46,6 +46,7 @@ var infer = function () {
 					document.getElementById('output').innerHTML = "";
 					document.getElementById('output').appendChild(pretty);
 					window.scrollTo(0, document.body.scrollHeight);
+					drawExp(response);
 				} else {
 					var arrayBufferView = new Uint8Array(response);
 					var blob = new Blob([arrayBufferView], {
@@ -60,6 +61,7 @@ var infer = function () {
 					img.src = base64image;
 					document.getElementById('output').innerHTML = "";
 					document.getElementById('output').appendChild(img);
+					drawExp(response);
 				}
 			})
 			.catch(error => settings.error(error));
@@ -129,6 +131,8 @@ var getSettingsFromForm = function (cb) {
 	var confidence = document.getElementById('confidenceNumber').value;
 	if (confidence) parts.push("&confidence=" + confidence);
 
+
+
 	var overlap = document.getElementById('overlapNumber').value;
 	if (overlap) parts.push("&overlap=" + overlap);
 
@@ -172,8 +176,18 @@ var getSettingsFromForm = function (cb) {
 		settings.url = parts.join("");
 		settings.data = JSON.stringify({ image: url });
 
-		console.log(settings);
-		cb(settings);
+		// 加載圖片到 main-canvas 畫布上
+		var img = new Image();
+		img.crossOrigin = 'Anonymous';
+		img.onload = function () {
+			var canvas = document.getElementById("main-canvas");
+			var ctx = canvas.getContext("2d");
+			canvas.width = img.width;
+			canvas.height = img.height;
+			ctx.drawImage(img, 0, 0, img.width, img.height);
+			cb(settings);
+		};
+		img.src = url;
 	}
 };
 
