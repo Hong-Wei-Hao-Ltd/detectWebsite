@@ -135,8 +135,9 @@ function displayImage(src) {
       currentScale -= 0.05;
     }
 
-    canvas.style.transformOrigin = "top left";
-    canvas.style.transform = `scale(${ currentScale })`;
+    canvas.style.width = `${canvas.width * currentScale}px`;
+    canvas.style.height = `${canvas.height * currentScale}px`;
+    canvas.style.margin = "0";
   };
   img.src = src;
 }

@@ -11,6 +11,8 @@
 			crossorigin="anonymous"
 		/>
 		<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
 		<style>
 			#webcam-container {
 				max-width: 640px;
@@ -18,11 +20,15 @@
 			}
 		</style>
 	</head>
+
 	<body onload="onOpenCvReady()" data-bs-theme="light">
 		<nav class="navbar bg-body-secondary">
 			<div class="container-fluid">
 				<h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
-				<button id="theme-toggle" class="btn btn-outline-secondary m-2 d-flex">
+				<button
+					id="theme-toggle"
+					class="btn btn-outline-secondary m-2 d-flex"
+				>
 					<span class="material-icons">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +144,7 @@
 							</div>
 
 							<button id="start-webcam" class="btn btn-success">
-									啟動Webcam
+										啟動Webcam
 							</button>
 							<button id="Prt-webcam" class="btn btn-primary">
 								拍照
@@ -149,8 +155,8 @@
 			</div>
 		</section>
 		<section class="bg-body p-3">
-			<h3 class="h4">預覽</h3>
-			<canvas id="main-canvas" class="border card"></canvas>
+			<h3 class="h4">預覽輸入</h3>
+			<canvas id="main-canvas" class="border card" style="display: block; margin: 0;"></canvas>
 		</section>
 		<section class="bg-body p-3">
 			<h3 class="h4">選項</h3>
@@ -358,11 +364,56 @@
 					</div>
 				</div>
 			</div>
+			<div id="s-setting" class="col-6-m3 relative">
+				<div class="form-control">
+					<div class="row g-3">
+						<div class="col-md-3">
+							<label for="model" class="form-label">模型</label>
+							<input
+								type="text"
+								class="form-control"
+								id="model"
+								aria-label="Disabled input"
+								disabled
+							/>
+						</div>
+						<div class="col-md-3">
+							<label for="version" class="form-label">版本</label>
+							<input
+								id="version"
+								class="form-control"
+								type="number"
+								aria-label="Disabled readonly input"
+								readonly
+								disabled
+							/>
+						</div>
+						<div class="col-md-3">
+							<label for="api_key" class="form-label"
+								>API Key</label
+							>
+							<input
+								id="api_key"
+								type="text"
+								class="form-control"
+								aria-label="Disabled input"
+								disabled
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
 		</section>
 		<section class="bg-body p-3">
 			<h3 class="h4">輸出</h3>
-			<button id="process-canvas" class="btn btn-primary">處理畫布</button>
-			<canvas id="result-canvas" class="border card"></canvas>
+			<div id="output" style="display: none"></div>
+			<div id="resultContainer" class="result">
+				<!-- <button id="process-canvas" class="btn btn-primary">
+					處理畫布
+				</button> -->
+				<button id="submit" class="btn btn-primary">送出</button>
+				<canvas id="result-canvas" class="border card" style="display: block; margin: 0;"></canvas>
+			</div>
 		</section>
 
 		<script src="/public/js/main.js"></script>
