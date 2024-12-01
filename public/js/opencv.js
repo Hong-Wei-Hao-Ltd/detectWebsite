@@ -315,7 +315,7 @@ function drawExp(response) {
             });
             console.debug("Resistor group:", resGroup);
 
-            // 調節���布大小避免超出整個��頁畫面
+            // 調節畫布大小避免超出整個網頁畫面
             const maxWidth = window.innerWidth * 0.9;
             const maxHeight = window.innerHeight * 0.9;
             let currentScale = 1;
