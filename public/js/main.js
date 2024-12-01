@@ -112,7 +112,48 @@ document.addEventListener("DOMContentLoaded", function () {
   updateInputDisplay();
   // window.getAndDisplayDevices();
 
+  // 顯示結果於新分頁
+  document.getElementById('open-new-tab').style.display = 'none';
+  document.getElementById('open-new-tab').addEventListener('click', function () {
+    const canvas = document.getElementById('result-canvas');
+    const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
+    const newTab = window.open();
+    newTab.document.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>輸出結果</title>
+        <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+          }
+          img {
+            max-width: 100%;
+            max-height: 100%;
+          }
+        </style>
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous"
+        />
+      </head>
+      <body class="bg-dark">
+        <img class="border" src="${ dataUrl }" alt="輸出結果">
+      </body>
+      </html>
+    `);
+  });
+
 });
+
 /**
  * 顯示圖像在畫布上
  * @param {string} src - 圖像來源URL
@@ -135,8 +176,8 @@ function displayImage(src) {
       currentScale -= 0.005;
     }
 
-    canvas.style.width = `${canvas.width * currentScale}px`;
-    canvas.style.height = `${canvas.height * currentScale}px`;
+    canvas.style.width = `${ canvas.width * currentScale }px`;
+    canvas.style.height = `${ canvas.height * currentScale }px`;
     canvas.style.margin = "0";
   };
   img.src = src;

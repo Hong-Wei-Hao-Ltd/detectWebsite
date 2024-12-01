@@ -170,9 +170,11 @@ var testResponse = {
     ]
 }
 var resGroup = [];
+
 function onOpenCvReady() {
     cvReady = true;
     console.debug("OpenCV is ready");
+    document.getElementById('result-canvas').style.display = 'none';
     // drawExp(response);
 }
 
@@ -227,7 +229,7 @@ function drawExp(response) {
 
                 // 繪製電阻
                 ctx.strokeStyle = 'blue';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = document.getElementById('lineWidthRange').value * 2;
                 ctx.strokeRect(x - width / 2, y - height / 2, width, height);
 
                 // 找到屬於這個電阻的色環區塊
@@ -242,7 +244,7 @@ function drawExp(response) {
 
                             // 繪製色環區塊
                             ctx.strokeStyle = 'red';
-                            ctx.lineWidth = 1;
+                            ctx.lineWidth = document.getElementById('lineWidthRange').value;
                             ctx.strokeRect(px - pwidth / 2, py - pheight / 2, pwidth, pheight);
 
                             // 計算色環區塊的平均顏色
@@ -288,9 +290,11 @@ function drawExp(response) {
                 // 顯示電阻的4個顏色並且標示上去
                 const sortedPredictions = uniquePredictions.sort((a, b) => a.class_id - b.class_id);
                 let colorText = sortedPredictions.map(prediction => prediction.color).join(' ');
-                ctx.fillStyle = 'black';
-                ctx.font = '16px Arial';
-                ctx.fillText(colorText, x - width / 2, y - height / 2 - 10);
+                if (document.getElementById('showLabel').checked) { // 使用者提供的顯示標籤文字選項
+                    ctx.fillStyle = 'black';
+                    ctx.font = '16px Arial';
+                    ctx.fillText(colorText, x - width / 2, y - height / 2 - 10);
+                }
 
                 // 計算電阻值
                 const firstBand = sortedPredictions.find(prediction => prediction.class_id === 0);
@@ -302,14 +306,16 @@ function drawExp(response) {
                     const resistanceValue = (COLOR_CODES[firstBand.color] * 10 + COLOR_CODES[secondBand.color]) * Math.pow(10, COLOR_CODES[multiplier.color]);
                     const toleranceValue = TOLERANCE_VALUES[tolerance.color];
                     const resistanceText = `${ resistanceValue }Ω ±${ Math.abs(toleranceValue) }%`;
-                    ctx.fillText(resistanceText, x - width / 2, y - height / 2 - 30);
+                    if (document.getElementById('showLabel').checked) {
+                        ctx.fillText(resistanceText, x - width / 2, y - height / 2 - 30);
+                    }
                 }
 
                 resGroup.push(resistor);
             });
             console.debug("Resistor group:", resGroup);
 
-            // 調節畫布大小避免超出整個網頁畫面
+            // 調節���布大小避免超出整個��頁畫面
             const maxWidth = window.innerWidth * 0.9;
             const maxHeight = window.innerHeight * 0.9;
             let currentScale = 1;
@@ -321,13 +327,17 @@ function drawExp(response) {
             canvas.style.width = `${ canvas.width * currentScale }px`;
             canvas.style.height = `${ canvas.height * currentScale }px`;
             canvas.style.margin = "0";
+
+            // 繪畫完畢後顯示 result-canvas
+            document.getElementById('result-canvas').style.display = 'block';
+            document.getElementById('open-new-tab').style.display = 'block';
         }, 100);
     };
     img.onerror = function (error) {
         console.error("Error loading original image:", error);
     };
     const mainCanvas = document.getElementById("main-canvas");
-    img.src = mainCanvas.toDataURL("image/jpeg", 1.0); // 使用 main-canvas 的 Base64 內容
+    img.src = mainCanvas.toDataURL("image/jpeg", 1.0);
 }
 
 function rgbToHsv(r, g, b) {

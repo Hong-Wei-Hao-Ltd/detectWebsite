@@ -64,7 +64,7 @@ function captureImage(videoElement) {
   }
 
   canvas.style.transformOrigin = "top left";
-  canvas.style.transform = `scale(${currentScale})`;
+  canvas.style.transform = `scale(${ currentScale })`;
 }
 
 /**
@@ -128,7 +128,8 @@ window.startCamera = async function (deviceId) {
     }
 
     const prtWebcamButton = document.getElementById("Prt-webcam");
-    prtWebcamButton.addEventListener("click", () => captureImage(videoElement));
+    prtWebcamButton.disabled = false; // 啟動Webcam時啟用拍照按鈕
+    prtWebcamButton.addEventListener("click", captureImageHandler);
 
     console.debug("Camera started successfully");
   } catch (error) {
@@ -164,8 +165,17 @@ window.stopCamera = function () {
     drawInterval = null;
   }
 
+  const prtWebcamButton = document.getElementById("Prt-webcam");
+  prtWebcamButton.disabled = true; // 停止Webcam時禁用拍照按鈕
+  prtWebcamButton.removeEventListener("click", captureImageHandler);
+
   document.getElementById("webcam-container").style.display = "none";
   console.debug("Camera stopped successfully");
+}
+
+function captureImageHandler() {
+  const videoElement = document.getElementById("webcam-video");
+  captureImage(videoElement);
 }
 
 /**

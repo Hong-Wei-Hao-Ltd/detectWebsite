@@ -3,7 +3,13 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>test</title>
+		<title>電阻辨識器</title>
+		<link
+			rel="icon"
+			href="./../../public/images/resistor.png"
+			type="image/png"
+		/>
+		<!-- 圖片來源: https://www.flaticon.com/free-icon/resistor_13214236 -->
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 			rel="stylesheet"
@@ -90,7 +96,7 @@
 							autocomplete="off"
 						/>
 						<label class="btn btn-outline-primary" for="btnradio3"
-							>Webcam 攝影機</label
+							>攝影機鏡頭 Webcam</label
 						>
 					</div>
 					<div>
@@ -144,9 +150,13 @@
 							</div>
 
 							<button id="start-webcam" class="btn btn-success">
-								啟動Webcam
+								啟動鏡頭
 							</button>
-							<button id="Prt-webcam" class="btn btn-primary">
+							<button
+								id="Prt-webcam"
+								class="btn btn-primary"
+								disabled
+							>
 								拍照
 							</button>
 						</div>
@@ -310,7 +320,7 @@
 								class="form-control pe-3"
 								min="1"
 								max="10"
-								value="2"
+								value="1"
 								id="lineWidthNumber"
 								style="padding-right: 3.5rem"
 							/>
@@ -332,7 +342,7 @@
 							min="1"
 							max="10"
 							step="1"
-							value="2"
+							value="1"
 							id="lineWidthRange"
 							style="width: 70%"
 						/>
@@ -356,7 +366,9 @@
 							d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1z"
 						/>
 					</svg>
-					<label for="showLabel" class="form-label">顯示標籤</label>
+					<label for="showLabel" class="form-label"
+						>顯示標籤文字</label
+					>
 					<div class="form-check form-switch">
 						<input
 							class="form-check-input"
@@ -398,7 +410,8 @@
 							>
 							<input
 								id="api_key"
-								type="password"
+								type="text"
+								style="-webkit-text-security: disc"
 								class="form-control"
 								aria-label="Disabled input"
 								disabled
@@ -415,12 +428,20 @@
 				<!-- <button id="process-canvas" class="btn btn-primary">
 					處理畫布
 				</button> -->
-				<button id="submit" class="btn btn-primary">送出</button>
-				<canvas
-					id="result-canvas"
-					class="border card"
-					style="display: block; margin: 0"
-				></canvas>
+				<div class="d-inline-flex">
+					<button id="submit" class="btn btn-primary">執行</button>
+					<div class="me-2"></div>
+					<button id="open-new-tab" class="btn btn-secondary">
+						在新分頁開啟圖片
+					</button>
+				</div>
+				<div class="pt-3">
+					<div class="pb-2"></div>
+					<canvas
+						id="result-canvas"
+						class="border card"
+						style="display: block; margin: 0"
+					></canvas>
 				</div>
 			</div>
 		</section>

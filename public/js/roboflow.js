@@ -14,12 +14,18 @@ document.addEventListener("DOMContentLoaded", function () {
  * 執行推理並顯示結果
  */
 var infer = function () {
+	console.debug("開始推理");
+	const submitButton = document.getElementById('submit');
+	submitButton.disabled = true;
+	submitButton.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行';
+
 	document.getElementById('output').innerHTML = "運算中...";
 	document.getElementById("resultContainer").style.display = "block";
 	window.scrollTo(0, document.body.scrollHeight);
 
 	getSettingsFromForm(function (settings) {
 		settings.error = function (xhr) {
+			console.debug("推理失敗");
 			document.getElementById('output').innerHTML = [
 				"加載響應時出錯。",
 				"",
@@ -27,6 +33,8 @@ var infer = function () {
 				"和其他參數(如圖片格式、URL、或文件)是否正確",
 				"然後再試一次。"
 			].join("\n");
+			submitButton.disabled = false;
+			submitButton.innerHTML = '執行';
 		};
 
 		fetch(settings.url, {
@@ -36,8 +44,41 @@ var infer = function () {
 				'Content-Type': 'application/json'
 			}
 		})
-			.then(response => response.json())
 			.then(response => {
+				console.debug("fetch 成功，開始讀取數據");
+				const reader = response.body.getReader();
+				const contentLength = +response.headers.get('Content-Length');
+				let receivedLength = 0;
+				let chunks = [];
+				let startTime = Date.now();
+
+				return reader.read().then(function processText({ done, value }) {
+					if (done) {
+						const chunksAll = new Uint8Array(receivedLength);
+						let position = 0;
+						for (let chunk of chunks) {
+							chunksAll.set(chunk, position);
+							position += chunk.length;
+						}
+						const result = new TextDecoder("utf-8").decode(chunksAll);
+						return JSON.parse(result);
+					}
+
+					chunks.push(value);
+					receivedLength += value.length;
+
+					return new Promise(resolve => setTimeout(() => resolve(reader.read().then(processText)), 50));
+				}).then(result => {
+					const elapsedTime = Date.now() - startTime;
+					const minDisplayTime = 1000; // 最小顯示時間 1 秒
+					if (elapsedTime < minDisplayTime) {
+						return new Promise(resolve => setTimeout(() => resolve(result), minDisplayTime - elapsedTime));
+					}
+					return result;
+				});
+			})
+			.then(response => {
+				console.debug("數據讀取完成，開始處理數據");
 				if (settings.format == "json") {
 					var pretty = document.createElement('pre');
 					var formatted = JSON.stringify(response, null, 4);
@@ -63,8 +104,16 @@ var infer = function () {
 					document.getElementById('output').appendChild(img);
 					drawExp(response);
 				}
+				console.debug("推理完成");
+				submitButton.disabled = false;
+				submitButton.innerHTML = '執行';
 			})
-			.catch(error => settings.error(error));
+			.catch(error => {
+				console.debug("推理過程中出錯");
+				settings.error(error);
+				submitButton.disabled = false;
+				submitButton.innerHTML = '執行';
+			});
 	});
 };
 
