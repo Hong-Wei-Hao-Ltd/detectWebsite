@@ -182,3 +182,9 @@ function displayImage(src) {
   };
   img.src = src;
 }
+
+
+window.onerror = function (message, source, lineno, colno, error) {
+  document.getElementById('debugLog').innerText += `錯誤發生: ${ message } at ${ source }:${ lineno }:${ colno }`;
+  return false;
+};

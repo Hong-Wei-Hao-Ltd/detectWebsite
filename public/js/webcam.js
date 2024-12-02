@@ -3,6 +3,10 @@ window.WebcamButtonText = {
   STOP: "關閉Webcam",
 };
 
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("start-webcam").innerText = WebcamButtonText.START;
+});
+
 let currentStream = null;
 let drawInterval = null;
 
