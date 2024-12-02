@@ -4,6 +4,15 @@
 document.addEventListener("DOMContentLoaded", function () {
   const startWebcamButton = document.getElementById("start-webcam");
   const themeToggleButton = document.getElementById("theme-toggle");
+  // 根據使用者裝置主題於加載時切換主題
+  const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const body = document.body;
+  const currentTheme = body.getAttribute("data-bs-theme");
+  if (prefersDarkScheme && currentTheme !== "dark") {
+    toggleTheme();
+  } else if (!prefersDarkScheme && currentTheme !== "light") {
+    toggleTheme();
+  }
 
   /**
    * 更新輸入顯示
