@@ -207,15 +207,15 @@ window.getAndDisplayDevices = async function () {
       console.debug("No webcams found");
     } else {
       if (isMobileDevice()) {
-        const frontCameraOption = document.createElement("option");
-        frontCameraOption.value = "user";
-        frontCameraOption.text = "前置相機";
-        webcamSelect.appendChild(frontCameraOption);
-
         const backCameraOption = document.createElement("option");
         backCameraOption.value = "environment";
         backCameraOption.text = "後置相機";
         webcamSelect.appendChild(backCameraOption);
+
+        const frontCameraOption = document.createElement("option");
+        frontCameraOption.value = "user";
+        frontCameraOption.text = "前置相機";
+        webcamSelect.appendChild(frontCameraOption);
       }
 
       for (const [index, track] of videoTracks.entries()) {
