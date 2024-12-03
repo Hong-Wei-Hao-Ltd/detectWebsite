@@ -232,11 +232,6 @@ function drawExp(response) {
                 ctx.lineWidth = document.getElementById('lineWidthRange').value * 2;
                 ctx.strokeRect(x - width / 2, y - height / 2, width, height);
 
-                // !important
-                // 需要調整執行邏輯，先將電阻分組並找尋其中的色環區塊，再將四個色環區塊分別進行遮罩與主體描邊計算出對應的色塊顏色。
-                // 最後再將四個色環區塊的色塊顏色組合成電阻的顏色標籤。
-                // 另外電阻計算需要避免產生過多的0，可以將單位轉換為 kΩ, MΩ 等單位。
-
                 // 找到屬於這個電阻的色環區塊
                 response.predictions.forEach(prediction => {
                     if (prediction.class !== "Resistor") {
@@ -295,7 +290,7 @@ function drawExp(response) {
                 // 顯示電阻的4個顏色並且標示上去
                 const sortedPredictions = uniquePredictions.sort((a, b) => a.class_id - b.class_id);
                 let colorText = sortedPredictions.map(prediction => prediction.color).join(' ');
-                if (document.getElementById('showLabel').checked) { // 使用者提供的顯示標籤文字選項
+                if (document.getElementById('showLabel').checked) {
                     ctx.fillStyle = 'black';
                     ctx.font = '16px Arial';
                     ctx.fillText(colorText, x - width / 2, y - height / 2 - 10);
@@ -308,9 +303,20 @@ function drawExp(response) {
                 const tolerance = sortedPredictions.find(prediction => prediction.class_id === 3);
 
                 if (firstBand && secondBand && multiplier && tolerance) {
-                    const resistanceValue = (COLOR_CODES[firstBand.color] * 10 + COLOR_CODES[secondBand.color]) * Math.pow(10, COLOR_CODES[multiplier.color]);
+                    let resistanceValue = (COLOR_CODES[firstBand.color] * 10 + COLOR_CODES[secondBand.color]) * Math.pow(10, COLOR_CODES[multiplier.color]);
                     const toleranceValue = TOLERANCE_VALUES[tolerance.color];
-                    const resistanceText = `${ resistanceValue }Ω ±${ Math.abs(toleranceValue) }%`;
+
+                    // 將電阻值轉換為適當的單位
+                    let unit = 'Ω';
+                    if (resistanceValue >= 1e6) {
+                        resistanceValue /= 1e6;
+                        unit = 'MΩ';
+                    } else if (resistanceValue >= 1e3) {
+                        resistanceValue /= 1e3;
+                        unit = 'kΩ';
+                    }
+
+                    const resistanceText = `${ resistanceValue }${ unit } ±${ toleranceValue }%`;
                     if (document.getElementById('showLabel').checked) {
                         ctx.fillText(resistanceText, x - width / 2, y - height / 2 - 30);
                     }

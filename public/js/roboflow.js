@@ -99,7 +99,6 @@ var infer = function () {
           pretty.innerHTML = formatted;
           document.getElementById('output').innerHTML = "";
           document.getElementById('output').appendChild(pretty);
-          drawExp(response);
         } else {
           var arrayBufferView = new Uint8Array(response);
           var blob = new Blob([arrayBufferView], {
@@ -111,8 +110,8 @@ var infer = function () {
           img.src = base64image;
           document.getElementById('output').innerHTML = "";
           document.getElementById('output').appendChild(img);
-          drawExp(response);
         }
+        drawExp(response);
         console.debug("推理完成");
         submitButton.disabled = false;
         submitButton.innerHTML = runButton.RUN;
