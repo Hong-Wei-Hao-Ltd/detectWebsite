@@ -1,0 +1,14 @@
+[
+    {
+        "name": "image1",
+        "url": "./../../public/images/data/image1.jpg"
+    },
+    {
+        "name": "image2",
+        "url": "./../../public/images/data/image1.jpg"
+    },
+    {
+        "name": "image3",
+        "url": "./../../public/images/data/image1.jpg"
+    }
+]

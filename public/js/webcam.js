@@ -132,7 +132,7 @@ window.startCamera = async function (deviceId) {
     }
 
     const prtWebcamButton = document.getElementById("Prt-webcam");
-    prtWebcamButton.disabled = false; // 啟動Webcam時啟用拍照按鈕
+    prtWebcamButton.disabled = false;
     prtWebcamButton.addEventListener("click", captureImageHandler);
 
     console.debug("Camera started successfully");
@@ -186,63 +186,67 @@ function captureImageHandler() {
  * 獲取並顯示可用的攝像頭設備
  */
 window.getAndDisplayDevices = async function () {
+  const webcamSelect = document.getElementById("webcam-select");
+  const errmsg = document.getElementById("webcam-errmsg");
+  errmsg.style.display = "none";
+  errmsg.classList.remove("d-flex");
+
   console.debug("Getting list of devices");
+
   const constraints = {
     video: true
   };
 
   try {
+    // document.getElementById("webcam-errmsg").style.display = "none";
+
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     const videoTracks = stream.getVideoTracks();
-    const webcamSelect = document.getElementById("webcam-select");
 
-    // 清空現有選項
-    webcamSelect.innerHTML = "";
+    if (isMobileDevice()) {
+      const backCameraOption = document.createElement("option");
+      backCameraOption.value = "environment";
+      backCameraOption.text = "後置相機";
+      webcamSelect.appendChild(backCameraOption);
 
-    if (videoTracks.length === 0) {
-      const option = document.createElement("option");
-      option.value = "none";
-      option.text = "無法獲取Webcam";
-      webcamSelect.appendChild(option);
-      console.debug("No webcams found");
-    } else {
-      if (isMobileDevice()) {
-        const backCameraOption = document.createElement("option");
-        backCameraOption.value = "environment";
-        backCameraOption.text = "後置相機";
-        webcamSelect.appendChild(backCameraOption);
-
-        const frontCameraOption = document.createElement("option");
-        frontCameraOption.value = "user";
-        frontCameraOption.text = "前置相機";
-        webcamSelect.appendChild(frontCameraOption);
-      }
-
-      for (const [index, track] of videoTracks.entries()) {
-        if (isMobileDevice() &&
-          (
-            (track.getSettings().deviceId || "").toLowerCase().includes("user")
-            || (track.getSettings().deviceId || "").toLowerCase().includes("environment")
-            || (track.label || "").toLowerCase().includes("front")
-            || (track.label || "").toLowerCase().includes("前置")
-            || (track.label || "").toLowerCase().includes("back")
-            || (track.label || "").toLowerCase().includes("後置")
-          )
-        ) {
-          continue; // 跳過行動裝置的前置/後置相機選
-        }
-        const option = document.createElement("option");
-        option.value = track.getSettings().deviceId;
-        option.text = track.label || `Camera ${ index + 1 }`;
-        webcamSelect.appendChild(option);
-      }
-
-      console.debug("Webcams found:", videoTracks);
+      const frontCameraOption = document.createElement("option");
+      frontCameraOption.value = "user";
+      frontCameraOption.text = "前置相機";
+      webcamSelect.appendChild(frontCameraOption);
     }
+
+    for (const [index, track] of videoTracks.entries()) {
+      if (isMobileDevice() &&
+        (
+          (track.getSettings().deviceId || "").toLowerCase().includes("user")
+          || (track.getSettings().deviceId || "").toLowerCase().includes("environment")
+          || (track.label || "").toLowerCase().includes("front")
+          || (track.label || "").toLowerCase().includes("前置")
+          || (track.label || "").toLowerCase().includes("back")
+          || (track.label || "").toLowerCase().includes("後置")
+        )
+      ) {
+        continue; // 跳過行動裝置的前置/後置相機選
+      }
+      const option = document.createElement("option");
+      option.value = track.getSettings().deviceId;
+      option.text = track.label || `Camera ${ index + 1 }`;
+      webcamSelect.appendChild(option);
+    }
+
+    console.debug("Webcams found:", videoTracks);
+
 
     // 停止流以釋放攝像頭
     stream.getTracks().forEach(track => track.stop());
   } catch (error) {
+    if (error.name === "NotFoundError") {
+      const errmsg = document.getElementById("webcam-errmsg");
+      errmsg.style.display = "block";
+      errmsg.classList.add("d-flex");
+      console.debug("No webcams found");
+      return;
+    }
     console.error("Error accessing media devices:", error);
   }
 }

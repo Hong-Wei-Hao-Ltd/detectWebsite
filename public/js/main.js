@@ -136,15 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
         <title>輸出結果</title>
         <style>
           body {
-            display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-          }
-          img {
-            max-width: 100%;
-            max-height: 100%;
           }
         </style>
         <link
@@ -155,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
         />
       </head>
       <body class="bg-dark">
-        <img class="border" src="${ dataUrl }" alt="輸出結果">
+        <img src="${dataUrl}" alt="輸出結果">
       </body>
       </html>
     `);

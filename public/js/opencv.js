@@ -232,6 +232,11 @@ function drawExp(response) {
                 ctx.lineWidth = document.getElementById('lineWidthRange').value * 2;
                 ctx.strokeRect(x - width / 2, y - height / 2, width, height);
 
+                // !important
+                // 需要調整執行邏輯，先將電阻分組並找尋其中的色環區塊，再將四個色環區塊分別進行遮罩與主體描邊計算出對應的色塊顏色。
+                // 最後再將四個色環區塊的色塊顏色組合成電阻的顏色標籤。
+                // 另外電阻計算需要避免產生過多的0，可以將單位轉換為 kΩ, MΩ 等單位。
+
                 // 找到屬於這個電阻的色環區塊
                 response.predictions.forEach(prediction => {
                     if (prediction.class !== "Resistor") {
@@ -331,6 +336,9 @@ function drawExp(response) {
             // 繪畫完畢後顯示 result-canvas
             document.getElementById('result-canvas').style.display = 'block';
             document.getElementById('open-new-tab').style.display = 'block';
+            setTimeout(() => {
+                window.scrollTo(0, document.body.scrollHeight);
+            }, 500);
         }, 100);
     };
     img.onerror = function (error) {
