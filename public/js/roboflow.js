@@ -29,6 +29,7 @@ const runButton = {
  */
 var infer = function () {
   console.debug("開始推理");
+  resGroup = []
   const submitButton = document.getElementById('submit');
   submitButton.disabled = true;
   submitButton.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行';
