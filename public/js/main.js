@@ -1,6 +1,7 @@
 /**
  * 主要程式代碼
  */
+var debugMode = false;
 document.addEventListener("DOMContentLoaded", function () {
   const startWebcamButton = document.getElementById("start-webcam");
   const themeToggleButton = document.getElementById("theme-toggle");

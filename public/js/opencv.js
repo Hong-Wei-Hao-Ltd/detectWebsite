@@ -247,20 +247,43 @@ function drawExp(response) {
                             ctx.lineWidth = document.getElementById('lineWidthRange').value;
                             ctx.strokeRect(px - pwidth / 2, py - pheight / 2, pwidth, pheight);
 
-                            // 計算色環區塊的平均顏色
+                            // 提取色環區塊的圖像數據
                             const imageData = ctx.getImageData(px - pwidth / 2, py - pheight / 2, pwidth, pheight);
                             const data = imageData.data;
 
+                            // 將圖像數據轉換為灰階圖像
+                            const grayImage = new cv.Mat();
+                            const src = cv.matFromImageData(imageData);
+                            cv.cvtColor(src, grayImage, cv.COLOR_RGBA2GRAY, 0);
+
+                            // 顯示灰階圖像
+                            displayStepImage(grayImage, 'Gray Image');
+
+                            // 使用Canny邊緣檢測
+                            const edges = new cv.Mat();
+                            cv.Canny(grayImage, edges, 30, 150);
+
+                            // 顯示邊緣檢測結果
+                            displayStepImage(edges, 'Edges');
+
+                            // 計算邊緣區域的平均顏色
                             let r = 0, g = 0, b = 0, count = 0;
                             for (let i = 0; i < data.length; i += 4) {
-                                r += data[i];
-                                g += data[i + 1];
-                                b += data[i + 2];
-                                count++;
+                                if (edges.data[i / 4] > 0) { // 只考慮邊緣區域
+                                    r += data[i];
+                                    g += data[i + 1];
+                                    b += data[i + 2];
+                                    count++;
+                                }
                             }
                             r = Math.floor(r / count);
                             g = Math.floor(g / count);
                             b = Math.floor(b / count);
+
+                            // 釋放內存
+                            src.delete();
+                            grayImage.delete();
+                            edges.delete();
 
                             console.debug("Average RGB color:", { r, g, b });
 
@@ -308,7 +331,10 @@ function drawExp(response) {
 
                     // 將電阻值轉換為適當的單位
                     let unit = 'Ω';
-                    if (resistanceValue >= 1e6) {
+                    if (resistanceValue >= 1e9) {
+                        resistanceValue /= 1e9;
+                        unit = 'GΩ';
+                    } else if (resistanceValue >= 1e6) {
                         resistanceValue /= 1e6;
                         unit = 'MΩ';
                     } else if (resistanceValue >= 1e3) {
@@ -316,7 +342,7 @@ function drawExp(response) {
                         unit = 'kΩ';
                     }
 
-                    const resistanceText = `${ resistanceValue }${ unit } ±${ toleranceValue }%`;
+                    const resistanceText = `${ resistanceValue }${ unit } ±${ toleranceValue || "??" }%`;
                     if (document.getElementById('showLabel').checked) {
                         ctx.fillText(resistanceText, x - width / 2, y - height / 2 - 30);
                     }
@@ -352,6 +378,31 @@ function drawExp(response) {
     };
     const mainCanvas = document.getElementById("main-canvas");
     img.src = mainCanvas.toDataURL("image/jpeg", 1.0);
+}
+
+function displayStepImage(mat, stepName) {
+    if (!debugMode) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = mat.cols;
+    canvas.height = mat.rows;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    // 確保輸入數據長度正確
+    const clampedArray = new Uint8ClampedArray(mat.data.length * 4);
+    for (let i = 0; i < mat.data.length; i++) {
+        clampedArray[i * 4] = mat.data[i];
+        clampedArray[i * 4 + 1] = mat.data[i];
+        clampedArray[i * 4 + 2] = mat.data[i];
+        clampedArray[i * 4 + 3] = 255; // 設置 alpha 通道為不透明
+    }
+    const imageData = new ImageData(clampedArray, mat.cols, mat.rows);
+    ctx.putImageData(imageData, 0, 0);
+
+    const label = document.createElement('div');
+    label.innerText = stepName;
+    const resultContainer = document.getElementById('resultContainer');
+    resultContainer.appendChild(label);
 }
 
 function rgbToHsv(r, g, b) {
