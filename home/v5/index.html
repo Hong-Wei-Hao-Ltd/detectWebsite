@@ -77,7 +77,9 @@
 							<div
 								class="btn-group pb-2"
 								role="group"
+								id="input-method"
 								aria-label="Basic radio toggle button group"
+								style="width: 100%"
 							>
 								<input
 									type="radio"
@@ -177,10 +179,25 @@
 									class="btn btn-outline-primary"
 									for="btnradio4"
 								>
-									
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										fill="currentColor"
+										class="bi bi-images"
+										viewBox="0 0 20 19"
+									>
+										<path
+											d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"
+										/>
+										<path
+											d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z"
+										/>
+									</svg>
 									範例素材
 								</label>
 							</div>
+
 							<div id="input-img-form">
 								<!-- file -->
 								<div id="upload-form" style="display: none">
@@ -307,8 +324,8 @@
 								</div>
 
 								<!-- example -->
-								 <div
-									id="url-form"
+								<div
+									id="exp-form"
 									style="display: none"
 									class="form-control"
 								>
@@ -385,7 +402,11 @@
 							>
 							<div class="input-group">
 								<div
-									style="width: 20%; position: relative"
+									style="
+										width: 20%;
+										min-width: 100px;
+										position: relative;
+									"
 									class="pe-3"
 								>
 									<input
@@ -417,7 +438,10 @@
 									step="5"
 									value="20"
 									id="confidenceRange"
-									style="width: 70%"
+									style="
+										width: 80%;
+										max-width: calc(100% - 100px);
+									"
 								/>
 							</div>
 						</div>
@@ -444,7 +468,11 @@
 							>
 							<div class="input-group">
 								<div
-									style="width: 20%; position: relative"
+									style="
+										width: 20%;
+										min-width: 100px;
+										position: relative;
+									"
 									class="pe-3"
 								>
 									<input
@@ -476,7 +504,10 @@
 									step="5"
 									value="20"
 									id="overlapRange"
-									style="width: 70%"
+									style="
+										width: 80%;
+										max-width: calc(100% - 100px);
+									"
 								/>
 							</div>
 						</div>
@@ -501,7 +532,11 @@
 							>
 							<div class="input-group">
 								<div
-									style="width: 20%; position: relative"
+									style="
+										width: 20%;
+										min-width: 100px;
+										position: relative;
+									"
 									class="pe-3"
 								>
 									<input
@@ -533,7 +568,10 @@
 									step="1"
 									value="1"
 									id="lineWidthRange"
-									style="width: 70%"
+									style="
+										width: 80%;
+										max-width: calc(100% - 100px);
+									"
 								/>
 							</div>
 						</div>
