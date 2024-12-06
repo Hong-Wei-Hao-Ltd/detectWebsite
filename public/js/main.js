@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
   updateInputDisplay();
   // window.getAndDisplayDevices();
 
-  // 顯示結果於新分頁
+  // 顯示���果於新分頁
   document.getElementById('open-new-tab').style.display = 'none';
   document.getElementById('open-new-tab').addEventListener('click', function () {
     const canvas = document.getElementById('result-canvas');
@@ -197,8 +197,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const option = document.createElement('li');
         option.setAttribute('data-value', item.url);
         option.innerHTML = `<a class="dropdown-item" href="#">
-                              <h5 class="card-title pt-2 fs-5">${item.name}</h5>
-                              <h6 class="card-body fs-6">${item.description}</h6>
+                              <h5 class="card-title pt-2 fs-5">${ item.name }</h5>
+                              <h6 class="card-body fs-6">${ item.description }</h6>
                             </a>`;
         resistorExamples.appendChild(option);
       });
@@ -221,7 +221,22 @@ function displayImage(src) {
   let canvas = document.getElementById("main-canvas");
   let context = canvas.getContext("2d");
   let img = new Image();
+
+  // 新增 spinner
+  let spinner = document.createElement("div");
+  spinner.className = "spinner-border text-secondary";
+  spinner.role = "status";
+  spinner.innerHTML = '<span class="visually-hidden">Loading...</span>';
+  spinner.style.position = "absolute";
+  spinner.style.top = "50%";
+  spinner.style.left = "50%";
+  spinner.style.transform = "translate(-50%, -50%)";
+  canvas.parentElement.appendChild(spinner);
+
   img.onload = function () {
+    // 移除 spinner
+    spinner.remove();
+
     canvas.width = img.width;
     canvas.height = img.height;
     context.drawImage(img, 0, 0, canvas.width, canvas.height);
