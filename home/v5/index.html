@@ -1,706 +1,807 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>電阻辨識器</title>
-    <link
-      rel="icon"
-      href="./../../public/images/resistor.png"
-      type="image/png"
-    />
-    <!-- 圖片來源: https://www.flaticon.com/free-icon/resistor_13214236 -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-    <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
-    <style>
-      #webcam-container {
-        max-width: 640px;
-        width: 100%;
-      }
-    </style>
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>電阻辨識器</title>
+		<link
+			rel="icon"
+			href="./../../public/images/resistor.png"
+			type="image/png"
+		/>
+		<!-- 圖片來源: https://www.flaticon.com/free-icon/resistor_13214236 -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+			crossorigin="anonymous"
+		/>
+		<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+		<style>
+			#webcam-container {
+				max-width: 640px;
+				width: 100%;
+			}
+		</style>
+	</head>
 
-  <body onload="onOpenCvReady()" class="bg-body" data-bs-theme="light">
-    <nav class="navbar bg-body-secondary">
-      <div class="container-fluid">
-        <h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
-        <button id="theme-toggle" class="btn btn-outline-secondary m-2 d-flex">
-          <span class="material-icons">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-brightness-high-fill"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
-              />
-            </svg>
-          </span>
-        </button>
-      </div>
-    </nav>
-    <div style="max-width: 1300px; justify-content: center; margin: auto">
-      <div class="m-2">
-        <section class="p-3">
-          <h3 class="h4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              fill="currentColor"
-              class="bi bi-arrow-down-right-circle"
-              viewBox="0 0 16 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.854 5.146a.5.5 0 1 0-.708.708L9.243 9.95H6.475a.5.5 0 1 0 0 1h3.975a.5.5 0 0 0 .5-.5V6.475a.5.5 0 1 0-1 0v2.768z"
-              />
-            </svg>
-            輸入
-          </h3>
-          <div id="select" class="row pt-1">
-            <div class="col">
-              <!-- <h3 class="h6">使用方式：</h3> -->
-              <div
-                class="btn-group pb-2"
-                role="group"
-                id="input-method"
-                aria-label="Basic radio toggle button group"
-                style="width: 100%"
-              >
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="btnradio"
-                  id="btnradio1"
-                  value="upload"
-                  autocomplete="off"
-                  checked
-                />
-                <label class="btn btn-outline-primary" for="btnradio1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    class="bi bi-file-earmark-arrow-up-fill"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M6.354 9.854a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 8.707V12.5a.5.5 0 0 1-1 0V8.707z"
-                    />
-                  </svg>
-                  上傳照片
-                </label>
+	<body onload="onOpenCvReady()" class="bg-body" data-bs-theme="light">
+		<nav class="navbar bg-body-secondary">
+			<div class="container-fluid">
+				<h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
+				<button
+					id="theme-toggle"
+					class="btn btn-outline-secondary m-2 d-flex"
+				>
+					<span class="material-icons">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							fill="currentColor"
+							class="bi bi-brightness-high-fill"
+							viewBox="0 0 16 16"
+						>
+							<path
+								d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
+							/>
+						</svg>
+					</span>
+				</button>
+			</div>
+		</nav>
+		<div style="max-width: 1300px; justify-content: center; margin: auto">
+			<div class="m-2">
+				<section class="p-3">
+					<h3 class="h4">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="25"
+							height="25"
+							fill="currentColor"
+							class="bi bi-arrow-down-right-circle"
+							viewBox="0 0 16 20"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.854 5.146a.5.5 0 1 0-.708.708L9.243 9.95H6.475a.5.5 0 1 0 0 1h3.975a.5.5 0 0 0 .5-.5V6.475a.5.5 0 1 0-1 0v2.768z"
+							/>
+						</svg>
+						輸入
+					</h3>
+					<div id="select" class="row pt-1">
+						<div class="col">
+							<!-- <h3 class="h6">使用方式：</h3> -->
+							<div
+								class="btn-group pb-2"
+								role="group"
+								id="input-method"
+								aria-label="Basic radio toggle button group"
+								style="width: 100%"
+							>
+								<input
+									type="radio"
+									class="btn-check"
+									name="btnradio"
+									id="btnradio1"
+									value="upload"
+									autocomplete="off"
+									checked
+								/>
+								<label
+									class="btn btn-outline-primary"
+									for="btnradio1"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										fill="currentColor"
+										class="bi bi-file-earmark-arrow-up-fill"
+										viewBox="0 0 20 20"
+									>
+										<path
+											d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M6.354 9.854a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 8.707V12.5a.5.5 0 0 1-1 0V8.707z"
+										/>
+									</svg>
+									上傳照片
+								</label>
 
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="btnradio"
-                  id="btnradio2"
-                  value="url"
-                  autocomplete="off"
-                />
-                <label class="btn btn-outline-primary" for="btnradio2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="25"
-                    height="25"
-                    fill="currentColor"
-                    class="bi bi-link-45deg"
-                    viewBox="0 0 20 18"
-                  >
-                    <path
-                      d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"
-                    />
-                    <path
-                      d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"
-                    />
-                  </svg>
-                  貼上照片網址
-                </label>
+								<input
+									type="radio"
+									class="btn-check"
+									name="btnradio"
+									id="btnradio2"
+									value="url"
+									autocomplete="off"
+								/>
+								<label
+									class="btn btn-outline-primary"
+									for="btnradio2"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="25"
+										height="25"
+										fill="currentColor"
+										class="bi bi-link-45deg"
+										viewBox="0 0 20 18"
+									>
+										<path
+											d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"
+										/>
+										<path
+											d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"
+										/>
+									</svg>
+									貼上照片網址
+								</label>
 
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="btnradio"
-                  id="btnradio3"
-                  value="webcam"
-                  autocomplete="off"
-                />
-                <label class="btn btn-outline-primary" for="btnradio3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    fill="currentColor"
-                    class="bi bi-camera-video-fill"
-                    viewBox="0 0 20 19"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2z"
-                    />
-                  </svg>
-                  攝影機鏡頭 Webcam
-                </label>
+								<input
+									type="radio"
+									class="btn-check"
+									name="btnradio"
+									id="btnradio3"
+									value="webcam"
+									autocomplete="off"
+								/>
+								<label
+									class="btn btn-outline-primary"
+									for="btnradio3"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										fill="currentColor"
+										class="bi bi-camera-video-fill"
+										viewBox="0 0 20 19"
+									>
+										<path
+											fill-rule="evenodd"
+											d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2z"
+										/>
+									</svg>
+									攝影機鏡頭 Webcam
+								</label>
 
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="btnradio"
-                  id="btnradio4"
-                  value="exp"
-                  autocomplete="off"
-                />
-                <label class="btn btn-outline-primary" for="btnradio4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    fill="currentColor"
-                    class="bi bi-images"
-                    viewBox="0 0 20 19"
-                  >
-                    <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-                    <path
-                      d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z"
-                    />
-                  </svg>
-                  範例素材
-                </label>
-              </div>
+								<input
+									type="radio"
+									class="btn-check"
+									name="btnradio"
+									id="btnradio4"
+									value="exp"
+									autocomplete="off"
+								/>
+								<label
+									class="btn btn-outline-primary"
+									for="btnradio4"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										fill="currentColor"
+										class="bi bi-images"
+										viewBox="0 0 20 19"
+									>
+										<path
+											d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"
+										/>
+										<path
+											d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z"
+										/>
+									</svg>
+									範例素材
+								</label>
+							</div>
 
-              <div id="input-img-form">
-                <!-- file -->
-                <div id="upload-form" style="display: none">
-                  <input type="file" id="upload-input" class="form-control" />
-                </div>
+							<div id="input-img-form">
+								<!-- file -->
+								<div id="upload-form" style="display: none">
+									<input
+										type="file"
+										id="upload-input"
+										class="form-control"
+									/>
+								</div>
 
-                <!-- url -->
-                <div id="url-form" style="display: none" class="form-control">
-                  <input
-                    type="text"
-                    id="url-input"
-                    class="form-control"
-                    placeholder="請輸入影像網址"
-                  />
-                  <div class="pb-1"></div>
-                  <button id="url-submit" class="btn btn-primary form-control">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-upload"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                      />
-                      <path
-                        d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"
-                      />
-                    </svg>
-                    上傳
-                  </button>
-                </div>
-                <!-- webcam -->
-                <div
-                  id="webcam-input"
-                  class="form-control"
-                  style="display: none"
-                >
-                  <div class="dropdown pb-2" style="width: 100%">
-                    <button
-                      class="btn btn-outline-primary dropdown-toggle"
-                      style="width: 100%"
-                      type="button"
-                      id="webcamDropdown"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      選擇攝像頭
-                    </button>
-                    <ul
-                      class="dropdown-menu"
-                      style="width: 100%"
-                      aria-labelledby="webcamDropdown"
-                      id="webcam-select"
-                    >
-                      <li><h6 class="dropdown-header">選擇攝像頭</h6></li>
-                      <!-- 列出所有可用的 Webcam -->
-                    </ul>
-                  </div>
-                  <div
-                    id="webcam-errmsg"
-                    style="display: none"
-                    class="alert alert-danger align-items-center"
-                    role="alert"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-exclamation-triangle-fill"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
-                      />
-                    </svg>
-                    <div class="ps-2">找不到可用的 Webcam</div>
-                  </div>
-                  <div id="webcam-container" style="display: none">
-                    <video
-                      id="webcam-video"
-                      width="100%"
-                      height="100%"
-                      class="card mb-2"
-                      autoplay
-                      muted
-                      playsinline
-                    ></video>
-                  </div>
-                  <button id="start-webcam" class="btn btn-success">
-                    啟動鏡頭
-                  </button>
-                  <button id="Prt-webcam" class="btn btn-primary" disabled>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-camera-fill"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                      <path
-                        d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0"
-                      />
-                    </svg>
-                    拍照
-                  </button>
-                </div>
+								<!-- url -->
+								<div
+									id="url-form"
+									style="display: none"
+									class="form-control"
+								>
+									<input
+										type="text"
+										id="url-input"
+										class="form-control"
+										placeholder="請輸入影像網址"
+									/>
+									<div class="pb-1"></div>
+									<button
+										id="url-submit"
+										class="btn btn-primary form-control"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="16"
+											height="16"
+											fill="currentColor"
+											class="bi bi-upload"
+											viewBox="0 0 20 20"
+										>
+											<path
+												d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+											/>
+											<path
+												d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"
+											/>
+										</svg>
+										上傳
+									</button>
+								</div>
+								<!-- webcam -->
+								<div
+									id="webcam-input"
+									class="form-control"
+									style="display: none"
+								>
+									<div
+										class="dropdown pb-2"
+										style="width: 100%"
+									>
+										<button
+											class="btn btn-outline-primary dropdown-toggle"
+											style="width: 100%"
+											type="button"
+											id="webcamDropdown"
+											data-bs-toggle="dropdown"
+											aria-expanded="false"
+										>
+											選擇攝像頭
+										</button>
+										<ul
+											class="dropdown-menu"
+											style="width: 100%"
+											aria-labelledby="webcamDropdown"
+											id="webcam-select"
+										>
+											<li>
+												<h6 class="dropdown-header">
+													選擇攝像頭
+												</h6>
+											</li>
+											<!-- 列出所有可用的 Webcam -->
+										</ul>
+									</div>
+									<div
+										id="webcam-errmsg"
+										style="display: none"
+										class="alert alert-danger align-items-center"
+										role="alert"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="16"
+											height="16"
+											fill="currentColor"
+											class="bi bi-exclamation-triangle-fill"
+											viewBox="0 0 16 16"
+										>
+											<path
+												d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
+											/>
+										</svg>
+										<div class="ps-2">
+											找不到可用的 Webcam
+										</div>
+									</div>
+									<div
+										id="webcam-container"
+										style="display: none"
+									>
+										<video
+											id="webcam-video"
+											width="100%"
+											height="100%"
+											class="card mb-2"
+											autoplay
+											muted
+											playsinline
+										></video>
+									</div>
+									<button
+										id="start-webcam"
+										class="btn btn-success"
+									>
+										啟動鏡頭
+									</button>
+									<button
+										id="Prt-webcam"
+										class="btn btn-primary"
+										disabled
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="16"
+											height="16"
+											fill="currentColor"
+											class="bi bi-camera-fill"
+											viewBox="0 0 20 20"
+										>
+											<path
+												d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"
+											/>
+											<path
+												d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0"
+											/>
+										</svg>
+										拍照
+									</button>
+								</div>
 
-                <!-- example -->
-                <!-- <div id="exp-form" style="display: none" class="form-control"> -->
-                <div
-                  id="exp-form"
-                  class="dropdown"
-                  style="display: none"
-                  style="width: 100%"
-                >
-                  <button
-                    class="btn btn-outline-primary dropdown-toggle"
-                    style="width: 100%"
-                    type="button"
-                    id="resistorDropdown"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    選擇範例圖片
-                  </button>
-                  <ul
-                    class="dropdown-menu"
-                    style="width: 100%"
-                    aria-labelledby="resistorDropdown"
-                    id="resistor-examples"
-                  >
-                    <li><h6 class="dropdown-header">選擇範例圖片</h6></li>
-                    <!-- 範例圖片選項將動態生成 -->
-                  </ul>
-                </div>
-                <!-- </div> -->
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="p-3">
-          <h3 class="h4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              fill="currentColor"
-              class="bi bi-search"
-              viewBox="0 0 20 20"
-            >
-              <path
-                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-              />
-            </svg>
-            預覽輸入
-          </h3>
-          <canvas
-            id="main-canvas"
-            class="border card"
-            style="display: block; margin: 0; width: 100%; height: 5rem; position: relative;"
-          ></canvas>
-          <!-- <div id="debugLog" class="p-3"></div> -->
-        </section>
-        <section class="p-3">
-          <h3 class="h4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              fill="currentColor"
-              class="bi bi-sliders"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"
-              />
-            </svg>
-            選項
-          </h3>
-          <div id="s-confidenceRange" class="pt-1 col-6-m3 relative">
-            <div class="form-control">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-check2-circle"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0"
-                />
-                <path
-                  d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"
-                />
-              </svg>
-              <label for="confidenceRange" class="form-label">最低信心度</label>
-              <div class="input-group">
-                <div
-                  style="width: 20%; min-width: 100px; position: relative"
-                  class="pe-3"
-                >
-                  <input
-                    type="number"
-                    class="form-control pe-3"
-                    min="0"
-                    max="100"
-                    value="20"
-                    id="confidenceNumber"
-                    style="padding-right: 3.5rem"
-                  />
-                  <span
-                    class="icon"
-                    style="
-                      position: absolute;
-                      right: 1.2rem;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      pointer-events: none;
-                    "
-                    >%</span
-                  >
-                </div>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  value="20"
-                  id="confidenceRange"
-                  style="width: 80%; max-width: calc(100% - 100px)"
-                />
-              </div>
-            </div>
-          </div>
-          <div id="s-overlapRange" class="pt-1 col-6-m3 relative">
-            <div class="form-control">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-layers-fill"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882z"
-                />
-                <path
-                  d="m2.125 8.567-1.86.992a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882l-1.86-.992-5.17 2.756a1.5 1.5 0 0 1-1.41 0z"
-                />
-              </svg>
-              <label for="overlapRange" class="form-label">最大重疊率</label>
-              <div class="input-group">
-                <div
-                  style="width: 20%; min-width: 100px; position: relative"
-                  class="pe-3"
-                >
-                  <input
-                    type="number"
-                    class="form-control pe-3"
-                    min="0"
-                    max="100"
-                    value="0"
-                    id="overlapNumber"
-                    style="padding-right: 3.5rem"
-                  />
-                  <span
-                    class="icon"
-                    style="
-                      position: absolute;
-                      right: 1.2rem;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      pointer-events: none;
-                    "
-                    >%</span
-                  >
-                </div>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  value="0"
-                  id="overlapRange"
-                  style="width: 80%; max-width: calc(100% - 100px)"
-                />
-              </div>
-            </div>
-          </div>
+								<!-- example -->
+								<!-- <div id="exp-form" style="display: none" class="form-control"> -->
+								<div
+									id="exp-form"
+									class="dropdown"
+									style="display: none"
+									style="width: 100%"
+								>
+									<button
+										class="btn btn-outline-primary dropdown-toggle"
+										style="width: 100%"
+										type="button"
+										id="resistorDropdown"
+										data-bs-toggle="dropdown"
+										aria-expanded="false"
+									>
+										選擇範例圖片
+									</button>
+									<ul
+										class="dropdown-menu"
+										style="width: 100%"
+										aria-labelledby="resistorDropdown"
+										id="resistor-examples"
+									>
+										<li>
+											<h6 class="dropdown-header">
+												選擇範例圖片
+											</h6>
+										</li>
+										<!-- 範例圖片選項將動態生成 -->
+									</ul>
+								</div>
+								<!-- </div> -->
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="p-3">
+					<h3 class="h4">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="25"
+							height="25"
+							fill="currentColor"
+							class="bi bi-search"
+							viewBox="0 0 20 20"
+						>
+							<path
+								d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+							/>
+						</svg>
+						預覽輸入
+					</h3>
+					<div class="position-relative">
+						<canvas
+							id="main-canvas"
+							class="border"
+							style="width: 100%; height: 5rem"
+						></canvas>
+						<div
+							class="position-absolute top-50 start-50 translate-middle"
+							id="input-loading"
+							style="display: none"
+						>
+							<div class="spinner-border" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+						</div>
+					</div>
 
-          <div id="s-lineWidthRange" class="pt-1 col-6-m3 relative">
-            <div class="form-control">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-border-width"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M0 3.5A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 5A.5.5 0 0 1 .5 8h15a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5"
-                />
-              </svg>
-              <label for="lineWidthRange" class="form-label">線條寬度</label>
-              <div class="input-group">
-                <div
-                  style="width: 20%; min-width: 100px; position: relative"
-                  class="pe-3"
-                >
-                  <input
-                    type="number"
-                    class="form-control pe-3"
-                    min="1"
-                    max="10"
-                    value="1"
-                    id="lineWidthNumber"
-                    style="padding-right: 3.5rem"
-                  />
-                  <span
-                    class="icon"
-                    style="
-                      position: absolute;
-                      right: 1.2rem;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      pointer-events: none;
-                    "
-                    >px</span
-                  >
-                </div>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="1"
-                  max="10"
-                  step="1"
-                  value="1"
-                  id="lineWidthRange"
-                  style="width: 80%; max-width: calc(100% - 100px)"
-                />
-              </div>
-            </div>
-          </div>
-          <div id="s-label" class="pt-1 col-6-m3 relative">
-            <div class="form-control">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-tags"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M3 2v4.586l7 7L14.586 9l-7-7zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586z"
-                />
-                <path
-                  d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1z"
-                />
-              </svg>
-              <label for="showLabel" class="form-label">顯示標籤文字</label>
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="showLabel"
-                  checked
-                />
-                <label class="form-check-label" for="showLabel"></label>
-              </div>
-            </div>
-          </div>
-          <div id="s-setting" class="pt-1 col-6-m3 relative">
-            <div class="form-control">
-              <div class="row g-3">
-                <div class="col-md-8">
-                  <label for="model" class="form-label">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-rocket-takeoff"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"
-                      />
-                      <path
-                        d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"
-                      />
-                      <path
-                        d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"
-                      />
-                    </svg>
-                    模型</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="model"
-                    aria-label="Disabled input"
-                    disabled
-                  />
-                </div>
-                <div class="col-md-4">
-                  <label for="version" class="form-label">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-git"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M15.698 7.287 8.712.302a1.03 1.03 0 0 0-1.457 0l-1.45 1.45 1.84 1.84a1.223 1.223 0 0 1 1.55 1.56l1.773 1.774a1.224 1.224 0 0 1 1.267 2.025 1.226 1.226 0 0 1-2.002-1.334L8.58 5.963v4.353a1.226 1.226 0 1 1-1.008-.036V5.887a1.226 1.226 0 0 1-.666-1.608L5.093 2.465l-4.79 4.79a1.03 1.03 0 0 0 0 1.457l6.986 6.986a1.03 1.03 0 0 0 1.457 0l6.953-6.953a1.03 1.03 0 0 0 0-1.457"
-                      />
-                    </svg>
-                    版本</label
-                  >
-                  <input
-                    id="version"
-                    class="form-control"
-                    type="number"
-                    aria-label="Disabled readonly input"
-                    readonly
-                    disabled
-                  />
-                </div>
-                <div class="col-md-3" style="display: none">
-                  <label for="api_key" class="form-label">API Key</label>
-                  <input
-                    id="api_key"
-                    type="text"
-                    style="-webkit-text-security: disc"
-                    class="form-control"
-                    aria-label="Disabled input"
-                    disabled
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="p-3">
-          <h3 class="h4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              fill="currentColor"
-              class="bi bi-arrow-up-left-circle"
-              viewBox="0 0 16 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-5.904 2.803a.5.5 0 1 0 .707-.707L6.707 6h2.768a.5.5 0 1 0 0-1H5.5a.5.5 0 0 0-.5.5v3.975a.5.5 0 0 0 1 0V6.707z"
-              />
-            </svg>
-            輸出
-          </h3>
-          <div id="output" style="display: none"></div>
-          <div id="resultContainer" class="result">
-            <!-- <button id="process-canvas" class="btn btn-primary">
+					<!-- <div id="debugLog" class="p-3"></div> -->
+				</section>
+				<section class="p-3">
+					<h3 class="h4">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="25"
+							height="25"
+							fill="currentColor"
+							class="bi bi-sliders"
+							viewBox="0 0 20 20"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"
+							/>
+						</svg>
+						選項
+					</h3>
+					<div id="s-confidenceRange" class="pt-1 col-6-m3 relative">
+						<div class="form-control">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								fill="currentColor"
+								class="bi bi-check2-circle"
+								viewBox="0 0 16 16"
+							>
+								<path
+									d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0"
+								/>
+								<path
+									d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"
+								/>
+							</svg>
+							<label for="confidenceRange" class="form-label"
+								>最低信心度</label
+							>
+							<div class="input-group">
+								<div
+									style="
+										width: 20%;
+										min-width: 100px;
+										position: relative;
+									"
+									class="pe-3"
+								>
+									<input
+										type="number"
+										class="form-control pe-3"
+										min="0"
+										max="100"
+										value="20"
+										id="confidenceNumber"
+										style="padding-right: 3.5rem"
+									/>
+									<span
+										class="icon"
+										style="
+											position: absolute;
+											right: 1.2rem;
+											top: 50%;
+											transform: translateY(-50%);
+											pointer-events: none;
+										"
+										>%</span
+									>
+								</div>
+								<input
+									type="range"
+									class="form-range"
+									min="0"
+									max="100"
+									step="5"
+									value="20"
+									id="confidenceRange"
+									style="
+										width: 80%;
+										max-width: calc(100% - 100px);
+									"
+								/>
+							</div>
+						</div>
+					</div>
+					<div id="s-overlapRange" class="pt-1 col-6-m3 relative">
+						<div class="form-control">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								fill="currentColor"
+								class="bi bi-layers-fill"
+								viewBox="0 0 16 16"
+							>
+								<path
+									d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882z"
+								/>
+								<path
+									d="m2.125 8.567-1.86.992a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882l-1.86-.992-5.17 2.756a1.5 1.5 0 0 1-1.41 0z"
+								/>
+							</svg>
+							<label for="overlapRange" class="form-label"
+								>最大重疊率</label
+							>
+							<div class="input-group">
+								<div
+									style="
+										width: 20%;
+										min-width: 100px;
+										position: relative;
+									"
+									class="pe-3"
+								>
+									<input
+										type="number"
+										class="form-control pe-3"
+										min="0"
+										max="100"
+										value="0"
+										id="overlapNumber"
+										style="padding-right: 3.5rem"
+									/>
+									<span
+										class="icon"
+										style="
+											position: absolute;
+											right: 1.2rem;
+											top: 50%;
+											transform: translateY(-50%);
+											pointer-events: none;
+										"
+										>%</span
+									>
+								</div>
+								<input
+									type="range"
+									class="form-range"
+									min="0"
+									max="100"
+									step="5"
+									value="0"
+									id="overlapRange"
+									style="
+										width: 80%;
+										max-width: calc(100% - 100px);
+									"
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div id="s-lineWidthRange" class="pt-1 col-6-m3 relative">
+						<div class="form-control">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								fill="currentColor"
+								class="bi bi-border-width"
+								viewBox="0 0 16 16"
+							>
+								<path
+									d="M0 3.5A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 5A.5.5 0 0 1 .5 8h15a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5"
+								/>
+							</svg>
+							<label for="lineWidthRange" class="form-label"
+								>線條寬度</label
+							>
+							<div class="input-group">
+								<div
+									style="
+										width: 20%;
+										min-width: 100px;
+										position: relative;
+									"
+									class="pe-3"
+								>
+									<input
+										type="number"
+										class="form-control pe-3"
+										min="1"
+										max="10"
+										value="1"
+										id="lineWidthNumber"
+										style="padding-right: 3.5rem"
+									/>
+									<span
+										class="icon"
+										style="
+											position: absolute;
+											right: 1.2rem;
+											top: 50%;
+											transform: translateY(-50%);
+											pointer-events: none;
+										"
+										>px</span
+									>
+								</div>
+								<input
+									type="range"
+									class="form-range"
+									min="1"
+									max="10"
+									step="1"
+									value="1"
+									id="lineWidthRange"
+									style="
+										width: 80%;
+										max-width: calc(100% - 100px);
+									"
+								/>
+							</div>
+						</div>
+					</div>
+					<div id="s-label" class="pt-1 col-6-m3 relative">
+						<div class="form-control">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								fill="currentColor"
+								class="bi bi-tags"
+								viewBox="0 0 16 16"
+							>
+								<path
+									d="M3 2v4.586l7 7L14.586 9l-7-7zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586z"
+								/>
+								<path
+									d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1z"
+								/>
+							</svg>
+							<label for="showLabel" class="form-label"
+								>顯示標籤文字</label
+							>
+							<div class="form-check form-switch">
+								<input
+									class="form-check-input"
+									type="checkbox"
+									id="showLabel"
+									checked
+								/>
+								<label
+									class="form-check-label"
+									for="showLabel"
+								></label>
+							</div>
+						</div>
+					</div>
+					<div id="s-setting" class="pt-1 col-6-m3 relative">
+						<div class="form-control">
+							<div class="row g-3">
+								<div class="col-md-8">
+									<label for="model" class="form-label">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="16"
+											height="16"
+											fill="currentColor"
+											class="bi bi-rocket-takeoff"
+											viewBox="0 0 16 16"
+										>
+											<path
+												d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"
+											/>
+											<path
+												d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"
+											/>
+											<path
+												d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"
+											/>
+										</svg>
+										模型</label
+									>
+									<input
+										type="text"
+										class="form-control"
+										id="model"
+										aria-label="Disabled input"
+										disabled
+									/>
+								</div>
+								<div class="col-md-4">
+									<label for="version" class="form-label">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="16"
+											height="16"
+											fill="currentColor"
+											class="bi bi-git"
+											viewBox="0 0 16 16"
+										>
+											<path
+												d="M15.698 7.287 8.712.302a1.03 1.03 0 0 0-1.457 0l-1.45 1.45 1.84 1.84a1.223 1.223 0 0 1 1.55 1.56l1.773 1.774a1.224 1.224 0 0 1 1.267 2.025 1.226 1.226 0 0 1-2.002-1.334L8.58 5.963v4.353a1.226 1.226 0 1 1-1.008-.036V5.887a1.226 1.226 0 0 1-.666-1.608L5.093 2.465l-4.79 4.79a1.03 1.03 0 0 0 0 1.457l6.986 6.986a1.03 1.03 0 0 0 1.457 0l6.953-6.953a1.03 1.03 0 0 0 0-1.457"
+											/>
+										</svg>
+										版本</label
+									>
+									<input
+										id="version"
+										class="form-control"
+										type="number"
+										aria-label="Disabled readonly input"
+										readonly
+										disabled
+									/>
+								</div>
+								<div class="col-md-3" style="display: none">
+									<label for="api_key" class="form-label"
+										>API Key</label
+									>
+									<input
+										id="api_key"
+										type="text"
+										style="-webkit-text-security: disc"
+										class="form-control"
+										aria-label="Disabled input"
+										disabled
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="p-3">
+					<h3 class="h4">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="25"
+							height="25"
+							fill="currentColor"
+							class="bi bi-arrow-up-left-circle"
+							viewBox="0 0 16 20"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-5.904 2.803a.5.5 0 1 0 .707-.707L6.707 6h2.768a.5.5 0 1 0 0-1H5.5a.5.5 0 0 0-.5.5v3.975a.5.5 0 0 0 1 0V6.707z"
+							/>
+						</svg>
+						輸出
+					</h3>
+					<div id="output" style="display: none"></div>
+					<div id="resultContainer" class="result">
+						<!-- <button id="process-canvas" class="btn btn-primary">
 					處理畫布
 				</button> -->
-            <div class="d-inline-flex">
-              <button id="submit" class="btn btn-primary">執行</button>
-              <div class="me-2"></div>
-              <button id="open-new-tab" class="btn btn-secondary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  fill="currentColor"
-                  class="bi bi-share"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"
-                  />
-                </svg>
-                在新分頁開啟圖片
-              </button>
-            </div>
-            <div class="pt-3">
-              <div class="pb-2"></div>
-              <canvas
-                id="result-canvas"
-                class="border card"
-                style="display: block; margin: 0"
-              ></canvas>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-    <script src="../../public/js/data.js"></script>
-    <script src="../../public/js/main.js"></script>
-    <script src="../../public/js/webcam.js"></script>
-    <script src="../../public/js/options.js"></script>
-    <script src="../../public/js/opencv.js"></script>
-    <script src="../../public/js/roboflow.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+						<div class="d-inline-flex">
+							<button id="submit" class="btn btn-primary">
+								執行
+							</button>
+							<div class="me-2"></div>
+							<button id="open-new-tab" class="btn btn-secondary">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="18"
+									height="18"
+									fill="currentColor"
+									class="bi bi-share"
+									viewBox="0 0 20 20"
+								>
+									<path
+										d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"
+									/>
+								</svg>
+								在新分頁開啟圖片
+							</button>
+						</div>
+						<div class="pt-3">
+							<div class="pb-2"></div>
+							<canvas
+								id="result-canvas"
+								class="border card"
+								style="display: block; margin: 0"
+							></canvas>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+		<script src="../../public/js/data.js"></script>
+		<script src="../../public/js/main.js"></script>
+		<script src="../../public/js/webcam.js"></script>
+		<script src="../../public/js/options.js"></script>
+		<script src="../../public/js/opencv.js"></script>
+		<script src="../../public/js/roboflow.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+			crossorigin="anonymous"
+		></script>
+	</body>
 </html>

@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
   updateInputDisplay();
   // window.getAndDisplayDevices();
 
-  // 顯示���果於新分頁
+  // 顯示結果於新分頁
   document.getElementById('open-new-tab').style.display = 'none';
   document.getElementById('open-new-tab').addEventListener('click', function () {
     const canvas = document.getElementById('result-canvas');
@@ -222,20 +222,13 @@ function displayImage(src) {
   let context = canvas.getContext("2d");
   let img = new Image();
 
-  // 新增 spinner
-  let spinner = document.createElement("div");
-  spinner.className = "spinner-border text-secondary";
-  spinner.role = "status";
-  spinner.innerHTML = '<span class="visually-hidden">Loading...</span>';
-  spinner.style.position = "absolute";
-  spinner.style.top = "50%";
-  spinner.style.left = "50%";
-  spinner.style.transform = "translate(-50%, -50%)";
-  canvas.parentElement.appendChild(spinner);
+  // 顯示 input-loading 元素
+  let loadingElement = document.getElementById("input-loading");
+  loadingElement.style.display = "block";
 
   img.onload = function () {
-    // 移除 spinner
-    spinner.remove();
+    // 隱藏 input-loading 元素
+    loadingElement.style.display = "none";
 
     canvas.width = img.width;
     canvas.height = img.height;

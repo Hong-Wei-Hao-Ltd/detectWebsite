@@ -235,7 +235,7 @@ window.getAndDisplayDevices = async function () {
 
   webcamSelect.innerHTML = '';
 
-  console.debug("獲取設��列表");
+  console.debug("獲取設備列表");
 
   const constraints = {
     video: true,

@@ -33,8 +33,19 @@ var infer = function () {
   resGroup = [];
   const submitButton = document.getElementById("submit");
   submitButton.disabled = true;
-  submitButton.innerHTML =
-    '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行';
+  submitButton.innerHTML = runButton.LOADING;
+
+  // 顯示秒數
+  const timerDiv = document.createElement("div");
+  timerDiv.style.display = "inline-block";
+  timerDiv.style.marginLeft = "10px";
+  submitButton.appendChild(timerDiv);
+
+  let startTime = Date.now();
+  let timerInterval = setInterval(() => {
+    let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    timerDiv.textContent = `(${elapsedTime}s)`;
+  }, 1000);
 
   document.getElementById("output").innerHTML = "運算中...";
   document.getElementById("resultContainer").style.display = "block";
@@ -42,6 +53,7 @@ var infer = function () {
   getSettingsFromForm(function (settings) {
     settings.error = function (xhr) {
       console.debug("推理失敗");
+      clearInterval(timerInterval);
       document.getElementById("output").innerHTML = [
         "加載響應時出錯。",
         "",
@@ -85,13 +97,19 @@ var infer = function () {
             chunks.push(value);
             receivedLength += value.length;
 
+            // 將 stream 的部分數據顯示在 output div 中
+            const outputDiv = document.getElementById("output");
+            const streamDiv = document.createElement("div");
+            streamDiv.textContent = new TextDecoder("utf-8").decode(value);
+            outputDiv.appendChild(streamDiv);
+
             return new Promise((resolve) =>
               setTimeout(() => resolve(reader.read().then(processText)), 50)
             );
           })
           .then((result) => {
             const elapsedTime = Date.now() - startTime;
-            const minDisplayTime = 1000; // 最小顯示時�� 1 秒
+            const minDisplayTime = 1000;
             if (elapsedTime < minDisplayTime) {
               return new Promise((resolve) =>
                 setTimeout(() => resolve(result), minDisplayTime - elapsedTime)
@@ -102,6 +120,7 @@ var infer = function () {
       })
       .then((response) => {
         console.debug("數據讀取完成，開始處理數據");
+        clearInterval(timerInterval);
         if (settings.format == "json") {
           var pretty = document.createElement("pre");
           var formatted = JSON.stringify(response, null, 4);
@@ -128,6 +147,7 @@ var infer = function () {
       })
       .catch((error) => {
         console.debug("推理過程中出錯");
+        clearInterval(timerInterval);
         settings.error(error);
         submitButton.disabled = false;
         submitButton.innerHTML = runButton.RUN;
