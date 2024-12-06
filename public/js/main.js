@@ -32,6 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (inputType === "webcam") {
       window.getAndDisplayDevices();
     }
+    if (inputType === "exp") {
+      window.expDemo = true;
+    } else {
+      window.expDemo = false;
+    }
   }
 
   /**
@@ -182,8 +187,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (target && target.tagName === 'LI') {
       const selectedUrl = target.getAttribute('data-value');
+      const demoId = target.getAttribute('data-id');
       if (selectedUrl) {
         document.getElementById('resistorDropdown').textContent = target.querySelector('h5').textContent;
+        window.expDemoId = demoId;
         displayImage(selectedUrl);
       }
     }
@@ -196,6 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
       data.forEach((item, index) => {
         const option = document.createElement('li');
         option.setAttribute('data-value', item.url);
+        option.setAttribute('data-id', item.id);
         option.innerHTML = `<a class="dropdown-item" href="#">
                               <h5 class="card-title pt-2 fs-5">${ item.name }</h5>
                               <h6 class="card-body fs-6">${ item.description }</h6>
