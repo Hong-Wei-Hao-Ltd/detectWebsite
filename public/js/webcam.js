@@ -18,10 +18,22 @@ function drawVideoFrame(videoElement, canvasElement, flip = false) {
   if (flip) {
     context.save();
     context.scale(-1, 1);
-    context.drawImage(videoElement, -canvasElement.width, 0, canvasElement.width, canvasElement.height);
+    context.drawImage(
+      videoElement,
+      -canvasElement.width,
+      0,
+      canvasElement.width,
+      canvasElement.height
+    );
     context.restore();
   } else {
-    context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+    context.drawImage(
+      videoElement,
+      0,
+      0,
+      canvasElement.width,
+      canvasElement.height
+    );
   }
 }
 
@@ -35,10 +47,22 @@ function drawVideoFrameWithRAF(videoElement, canvasElement, flip = false) {
     if (flip) {
       context.save();
       context.scale(-1, 1);
-      context.drawImage(videoElement, -canvasElement.width, 0, canvasElement.width, canvasElement.height);
+      context.drawImage(
+        videoElement,
+        -canvasElement.width,
+        0,
+        canvasElement.width,
+        canvasElement.height
+      );
       context.restore();
     } else {
-      context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      context.drawImage(
+        videoElement,
+        0,
+        0,
+        canvasElement.width,
+        canvasElement.height
+      );
     }
     requestAnimationFrame(draw);
   }
@@ -63,12 +87,15 @@ function captureImage(videoElement) {
   const maxHeight = window.innerHeight * 0.9;
   let currentScale = 1;
 
-  while (canvas.width * currentScale > maxWidth || canvas.height * currentScale > maxHeight) {
+  while (
+    canvas.width * currentScale > maxWidth ||
+    canvas.height * currentScale > maxHeight
+  ) {
     currentScale -= 0.005;
   }
 
   canvas.style.transformOrigin = "top left";
-  canvas.style.transform = `scale(${ currentScale })`;
+  canvas.style.transform = `scale(${currentScale})`;
 }
 
 /**
@@ -104,7 +131,12 @@ window.startCamera = async function (deviceId) {
   console.debug("Starting camera with deviceId:", deviceId);
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: deviceId === "user" || deviceId === "environment" ? { exact: deviceId } : { deviceId: deviceId ? { exact: deviceId } : undefined } },
+      video: {
+        facingMode:
+          deviceId === "user" || deviceId === "environment"
+            ? { exact: deviceId }
+            : { deviceId: deviceId ? { exact: deviceId } : undefined },
+      },
     });
 
     videoElement.srcObject = stream;
@@ -112,11 +144,11 @@ window.startCamera = async function (deviceId) {
     currentStream = stream;
 
     if (isIOSDevice()) {
-      videoElement.style.width = document.width + 'px';
-      videoElement.style.height = document.height + 'px';
-      videoElement.setAttribute('autoplay', '');
-      videoElement.setAttribute('muted', '');
-      videoElement.setAttribute('playsinline', '');
+      videoElement.style.width = document.width + "px";
+      videoElement.style.height = document.height + "px";
+      videoElement.setAttribute("autoplay", "");
+      videoElement.setAttribute("muted", "");
+      videoElement.setAttribute("playsinline", "");
     }
 
     startWebcamButton.textContent = WebcamButtonText.STOP;
@@ -126,9 +158,17 @@ window.startCamera = async function (deviceId) {
 
     const flip = deviceId === "user";
     if (isMobileDevice()) {
-      drawVideoFrameWithRAF(videoElement, document.createElement("canvas"), flip);
+      drawVideoFrameWithRAF(
+        videoElement,
+        document.createElement("canvas"),
+        flip
+      );
     } else {
-      drawInterval = setInterval(() => drawVideoFrame(videoElement, document.createElement("canvas"), flip), 1000 / 30); // 每秒30幀
+      drawInterval = setInterval(
+        () =>
+          drawVideoFrame(videoElement, document.createElement("canvas"), flip),
+        1000 / 30
+      ); // 每秒30幀
     }
 
     const prtWebcamButton = document.getElementById("Prt-webcam");
@@ -139,7 +179,7 @@ window.startCamera = async function (deviceId) {
   } catch (error) {
     console.error("Error starting camera:", error);
   }
-}
+};
 
 /**
  * 停止攝像頭
@@ -175,7 +215,7 @@ window.stopCamera = function () {
 
   document.getElementById("webcam-container").style.display = "none";
   console.debug("Camera stopped successfully");
-}
+};
 
 function captureImageHandler() {
   const videoElement = document.getElementById("webcam-video");
@@ -190,11 +230,13 @@ window.getAndDisplayDevices = async function () {
   const errmsg = document.getElementById("webcam-errmsg");
   errmsg.style.display = "none";
   errmsg.classList.remove("d-flex");
+  const startWebcamButton = document.getElementById("start-webcam");
+  startWebcamButton.disabled = false;
 
   console.debug("Getting list of devices");
 
   const constraints = {
-    video: true
+    video: true,
   };
 
   try {
@@ -204,49 +246,60 @@ window.getAndDisplayDevices = async function () {
     const videoTracks = stream.getVideoTracks();
 
     if (isMobileDevice()) {
-      const backCameraOption = document.createElement("option");
-      backCameraOption.value = "environment";
-      backCameraOption.text = "後置相機";
+      const backCameraOption = document.createElement("li");
+      backCameraOption.innerHTML = '<a class="dropdown-item" href="#" data-value="environment">後置相機</a>';
       webcamSelect.appendChild(backCameraOption);
 
-      const frontCameraOption = document.createElement("option");
-      frontCameraOption.value = "user";
-      frontCameraOption.text = "前置相機";
+      const frontCameraOption = document.createElement("li");
+      frontCameraOption.innerHTML = '<a class="dropdown-item" href="#" data-value="user">前置相機</a>';
       webcamSelect.appendChild(frontCameraOption);
     }
 
     for (const [index, track] of videoTracks.entries()) {
-      if (isMobileDevice() &&
-        (
-          (track.getSettings().deviceId || "").toLowerCase().includes("user")
-          || (track.getSettings().deviceId || "").toLowerCase().includes("environment")
-          || (track.label || "").toLowerCase().includes("front")
-          || (track.label || "").toLowerCase().includes("前置")
-          || (track.label || "").toLowerCase().includes("back")
-          || (track.label || "").toLowerCase().includes("後置")
-        )
+      if (
+        isMobileDevice() &&
+        ((track.getSettings().deviceId || "").toLowerCase().includes("user") ||
+          (track.getSettings().deviceId || "")
+            .toLowerCase()
+            .includes("environment") ||
+          (track.label || "").toLowerCase().includes("front") ||
+          (track.label || "").toLowerCase().includes("前置") ||
+          (track.label || "").toLowerCase().includes("back") ||
+          (track.label || "").toLowerCase().includes("後置"))
       ) {
         continue; // 跳過行動裝置的前置/後置相機選
       }
-      const option = document.createElement("option");
-      option.value = track.getSettings().deviceId;
-      option.text = track.label || `Camera ${ index + 1 }`;
+      const option = document.createElement("li");
+      option.innerHTML = `<a class="dropdown-item" href="#" data-value="${track.getSettings().deviceId}">${track.label || `Camera ${index + 1}`}</a>`;
       webcamSelect.appendChild(option);
     }
 
     console.debug("Webcams found:", videoTracks);
 
-
     // 停止流以釋放攝像頭
-    stream.getTracks().forEach(track => track.stop());
+    stream.getTracks().forEach((track) => track.stop());
   } catch (error) {
     if (error.name === "NotFoundError") {
       const errmsg = document.getElementById("webcam-errmsg");
       errmsg.style.display = "block";
       errmsg.classList.add("d-flex");
+      const startWebcamButton = document.getElementById("start-webcam");
+      startWebcamButton.disabled = true;
+
       console.debug("No webcams found");
       return;
     }
     console.error("Error accessing media devices:", error);
   }
-}
+};
+
+document.getElementById('webcam-select').addEventListener('click', function (event) {
+  if (event.target.tagName === 'A') {
+    const selectedDeviceId = event.target.getAttribute('data-value');
+    if (selectedDeviceId) {
+      document.getElementById('webcamDropdown').textContent = event.target.textContent;
+      window.stopCamera();
+      window.startCamera(selectedDeviceId);
+    }
+  }
+});

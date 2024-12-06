@@ -175,6 +175,42 @@ document.addEventListener("DOMContentLoaded", function () {
     `);
   });
 
+  document.getElementById('resistor-examples').addEventListener('click', function (event) {
+    let target = event.target;
+    while (target && target.tagName !== 'LI') {
+      target = target.parentElement;
+    }
+    if (target && target.tagName === 'LI') {
+      const selectedUrl = target.getAttribute('data-value');
+      if (selectedUrl) {
+        document.getElementById('resistorDropdown').textContent = target.querySelector('h5').textContent;
+        displayImage(selectedUrl);
+      }
+    }
+  });
+
+  fetch('../../public/images/data/resistorData.json')
+    .then(response => response.json())
+    .then(data => {
+      const resistorExamples = document.getElementById('resistor-examples');
+      data.forEach((item, index) => {
+        const option = document.createElement('li');
+        option.setAttribute('data-value', item.url);
+        option.innerHTML = `<a class="dropdown-item" href="#">
+                              <h5 class="card-title pt-2 fs-5">${item.name}</h5>
+                              <h6 class="card-body fs-6">${item.description}</h6>
+                            </a>`;
+        resistorExamples.appendChild(option);
+      });
+    });
+
+  document.getElementById('resistor-examples').addEventListener('change', function () {
+    const selectedUrl = this.value;
+    if (selectedUrl) {
+      displayImage(selectedUrl);
+    }
+  });
+
 });
 
 /**

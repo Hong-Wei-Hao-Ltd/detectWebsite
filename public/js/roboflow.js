@@ -3,9 +3,9 @@
  */
 document.addEventListener("DOMContentLoaded", function () {
   //values pulled from query string
-  document.getElementById('model').value = "resistance-eg6us";
-  document.getElementById('version').value = "3";
-  document.getElementById('api_key').value = "UB9aRpCvDKvf0BkR3BGd";
+  document.getElementById("model").value = "resistance-eg6us";
+  document.getElementById("version").value = "3";
+  document.getElementById("api_key").value = "UB9aRpCvDKvf0BkR3BGd";
 
   setupButtonListeners();
 });
@@ -21,31 +21,33 @@ const runButton = {
               d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"
             />
 				</svg>執行`,
-  LOADING: '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行'
-}
+  LOADING:
+    '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行',
+};
 
 /**
  * 執行推理並顯示結果
  */
 var infer = function () {
   console.debug("開始推理");
-  resGroup = []
-  const submitButton = document.getElementById('submit');
+  resGroup = [];
+  const submitButton = document.getElementById("submit");
   submitButton.disabled = true;
-  submitButton.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行';
+  submitButton.innerHTML =
+    '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 執行';
 
-  document.getElementById('output').innerHTML = "運算中...";
+  document.getElementById("output").innerHTML = "運算中...";
   document.getElementById("resultContainer").style.display = "block";
 
   getSettingsFromForm(function (settings) {
     settings.error = function (xhr) {
       console.debug("推理失敗");
-      document.getElementById('output').innerHTML = [
+      document.getElementById("output").innerHTML = [
         "加載響應時出錯。",
         "",
         "請檢查您的API密鑰、模型、版本，",
         "和其他參數(如圖片格式、URL、或文件)是否正確",
-        "然後再試一次。"
+        "然後再試一次。",
       ].join("\n");
       submitButton.disabled = false;
       submitButton.innerHTML = runButton.RUN;
@@ -55,69 +57,76 @@ var infer = function () {
       method: settings.method,
       body: settings.data,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => {
+      .then((response) => {
         console.debug("fetch 成功，開始讀取數據");
         const reader = response.body.getReader();
-        const contentLength = +response.headers.get('Content-Length');
+        const contentLength = +response.headers.get("Content-Length");
         let receivedLength = 0;
         let chunks = [];
         let startTime = Date.now();
 
-        return reader.read().then(function processText({ done, value }) {
-          if (done) {
-            const chunksAll = new Uint8Array(receivedLength);
-            let position = 0;
-            for (let chunk of chunks) {
-              chunksAll.set(chunk, position);
-              position += chunk.length;
+        return reader
+          .read()
+          .then(function processText({ done, value }) {
+            if (done) {
+              const chunksAll = new Uint8Array(receivedLength);
+              let position = 0;
+              for (let chunk of chunks) {
+                chunksAll.set(chunk, position);
+                position += chunk.length;
+              }
+              const result = new TextDecoder("utf-8").decode(chunksAll);
+              return JSON.parse(result);
             }
-            const result = new TextDecoder("utf-8").decode(chunksAll);
-            return JSON.parse(result);
-          }
 
-          chunks.push(value);
-          receivedLength += value.length;
+            chunks.push(value);
+            receivedLength += value.length;
 
-          return new Promise(resolve => setTimeout(() => resolve(reader.read().then(processText)), 50));
-        }).then(result => {
-          const elapsedTime = Date.now() - startTime;
-          const minDisplayTime = 1000; // 最小顯示時間 1 秒
-          if (elapsedTime < minDisplayTime) {
-            return new Promise(resolve => setTimeout(() => resolve(result), minDisplayTime - elapsedTime));
-          }
-          return result;
-        });
+            return new Promise((resolve) =>
+              setTimeout(() => resolve(reader.read().then(processText)), 50)
+            );
+          })
+          .then((result) => {
+            const elapsedTime = Date.now() - startTime;
+            const minDisplayTime = 1000; // 最小顯示時間 1 秒
+            if (elapsedTime < minDisplayTime) {
+              return new Promise((resolve) =>
+                setTimeout(() => resolve(result), minDisplayTime - elapsedTime)
+              );
+            }
+            return result;
+          });
       })
-      .then(response => {
+      .then((response) => {
         console.debug("數據讀取完成，開始處理數據");
         if (settings.format == "json") {
-          var pretty = document.createElement('pre');
+          var pretty = document.createElement("pre");
           var formatted = JSON.stringify(response, null, 4);
 
           pretty.innerHTML = formatted;
-          document.getElementById('output').innerHTML = "";
-          document.getElementById('output').appendChild(pretty);
+          document.getElementById("output").innerHTML = "";
+          document.getElementById("output").appendChild(pretty);
         } else {
           var arrayBufferView = new Uint8Array(response);
           var blob = new Blob([arrayBufferView], {
-            'type': 'image/jpeg'
+            type: "image/jpeg",
           });
           var base64image = window.URL.createObjectURL(blob);
 
-          var img = document.createElement('img');
+          var img = document.createElement("img");
           img.src = base64image;
-          document.getElementById('output').innerHTML = "";
-          document.getElementById('output').appendChild(img);
+          document.getElementById("output").innerHTML = "";
+          document.getElementById("output").appendChild(img);
         }
         drawExp(response);
         console.debug("推理完成");
         submitButton.disabled = false;
         submitButton.innerHTML = runButton.RUN;
       })
-      .catch(error => {
+      .catch((error) => {
         console.debug("推理過程中出錯");
         settings.error(error);
         submitButton.disabled = false;
@@ -135,23 +144,23 @@ var retrieveDefaultValuesFromLocalStorage = function () {
     var model = localStorage.getItem("rf.model");
     var format = localStorage.getItem("rf.format");
 
-    if (api_key) document.getElementById('api_key').value = api_key;
-    if (model) document.getElementById('model').value = model;
-    if (format) document.getElementById('format').value = format;
+    if (api_key) document.getElementById("api_key").value = api_key;
+    if (model) document.getElementById("model").value = model;
+    if (format) document.getElementById("format").value = format;
   } catch (e) {
     // localStorage disabled
   }
 
-  document.getElementById('model').addEventListener('change', function () {
-    localStorage.setItem('rf.model', this.value);
+  document.getElementById("model").addEventListener("change", function () {
+    localStorage.setItem("rf.model", this.value);
   });
 
-  document.getElementById('api_key').addEventListener('change', function () {
-    localStorage.setItem('rf.api_key', this.value);
+  document.getElementById("api_key").addEventListener("change", function () {
+    localStorage.setItem("rf.api_key", this.value);
   });
 
-  document.getElementById('format').addEventListener('change', function () {
-    localStorage.setItem('rf.format', this.value);
+  document.getElementById("format").addEventListener("change", function () {
+    localStorage.setItem("rf.format", this.value);
   });
 };
 
@@ -160,12 +169,11 @@ var retrieveDefaultValuesFromLocalStorage = function () {
  */
 var setupButtonListeners = function () {
   // 提交表單時運行推理
-  document.getElementById('submit').innerHTML = runButton.RUN;
-  document.getElementById('submit').addEventListener('click', function (event) {
+  document.getElementById("submit").innerHTML = runButton.RUN;
+  document.getElementById("submit").addEventListener("click", function (event) {
     event.preventDefault();
     infer();
   });
-
 };
 
 /**
@@ -179,21 +187,19 @@ var getSettingsFromForm = function (cb) {
 
   var parts = [
     "https://detect.roboflow.com/",
-    document.getElementById('model').value,
+    document.getElementById("model").value,
     "/",
-    document.getElementById('version').value,
-    "?api_key=" + document.getElementById('api_key').value
+    document.getElementById("version").value,
+    "?api_key=" + document.getElementById("api_key").value,
   ];
 
-  var classes = document.getElementById('classes')?.value || "";
+  var classes = document.getElementById("classes")?.value || "";
   if (classes) parts.push("&classes=" + classes);
 
-  var confidence = document.getElementById('confidenceNumber').value;
+  var confidence = document.getElementById("confidenceNumber").value;
   if (confidence) parts.push("&confidence=" + confidence);
 
-
-
-  var overlap = document.getElementById('overlapNumber').value;
+  var overlap = document.getElementById("overlapNumber").value;
   if (overlap) parts.push("&overlap=" + overlap);
 
   // var format = document.querySelector('#format .active').getAttribute('data-value');
@@ -217,18 +223,20 @@ var getSettingsFromForm = function (cb) {
 
   var method = document.querySelector('input[name="btnradio"]:checked').value;
 
-  if (method == "upload" || method == "webcam") {
-    getBase64fromCanvas().then(function (base64image) {
-      settings.url = parts.join("");
-      settings.data = base64image;
+  if (method == "upload" || method == "webcam" || method == "exp") {
+    getBase64fromCanvas()
+      .then(function (base64image) {
+        settings.url = parts.join("");
+        settings.data = base64image;
 
-      console.log(settings);
-      cb(settings);
-    }).catch(function (error) {
-      alert("將畫布轉換為 Base64 時發生錯誤：" + error);
-    });
+        console.log(settings);
+        cb(settings);
+      })
+      .catch(function (error) {
+        alert("將畫布轉換為 Base64 時發生錯誤：" + error);
+      });
   } else if (method == "url") {
-    var url = document.getElementById('url-input').value;
+    var url = document.getElementById("url-input").value;
     if (!url) return alert("請輸入影像網址");
 
     parts.push("&image=" + encodeURIComponent(url));
@@ -238,7 +246,7 @@ var getSettingsFromForm = function (cb) {
 
     // 加載圖片到 main-canvas 畫布上
     var img = new Image();
-    img.crossOrigin = 'Anonymous';
+    img.crossOrigin = "Anonymous";
     img.onload = function () {
       var canvas = document.getElementById("main-canvas");
       var ctx = canvas.getContext("2d");
@@ -248,6 +256,11 @@ var getSettingsFromForm = function (cb) {
       cb(settings);
     };
     img.src = url;
+  } else {
+    alert("未知的方式");
+    const submitButton = document.getElementById("submit");
+    submitButton.disabled = false;
+    submitButton.innerHTML = runButton.RUN;
   }
 };
 
@@ -315,9 +328,9 @@ var resizeImage = function (base64Str) {
       }
       canvas.width = width;
       canvas.height = height;
-      var ctx = canvas.getContext('2d');
+      var ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/jpeg', 1.0));
+      resolve(canvas.toDataURL("image/jpeg", 1.0));
     };
   });
 };
