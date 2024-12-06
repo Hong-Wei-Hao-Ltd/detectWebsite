@@ -95,7 +95,7 @@ function captureImage(videoElement) {
   }
 
   canvas.style.transformOrigin = "top left";
-  canvas.style.transform = `scale(${currentScale})`;
+  canvas.style.transform = `scale(${ currentScale })`;
 }
 
 /**
@@ -128,7 +128,7 @@ window.startCamera = async function (deviceId) {
   if (currentStream) {
     stopCamera();
   }
-  console.debug("Starting camera with deviceId:", deviceId);
+  console.debug("開始啟動攝像頭，設備ID:", deviceId);
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: {
@@ -175,9 +175,9 @@ window.startCamera = async function (deviceId) {
     prtWebcamButton.disabled = false;
     prtWebcamButton.addEventListener("click", captureImageHandler);
 
-    console.debug("Camera started successfully");
+    console.debug("攝像頭啟動成功");
   } catch (error) {
-    console.error("Error starting camera:", error);
+    console.error("啟動攝像頭時出錯:", error);
   }
 };
 
@@ -191,7 +191,7 @@ window.stopCamera = function () {
   if (startWebcamButton.textContent.trim() === WebcamButtonText.START) {
     return;
   }
-  console.debug("Stopping camera");
+  console.debug("開始停止攝像頭");
   if (currentStream) {
     currentStream.getTracks().forEach((track) => track.stop());
     videoElement.srcObject = null;
@@ -214,7 +214,7 @@ window.stopCamera = function () {
   prtWebcamButton.removeEventListener("click", captureImageHandler);
 
   document.getElementById("webcam-container").style.display = "none";
-  console.debug("Camera stopped successfully");
+  console.debug("攝像頭停止成功");
 };
 
 function captureImageHandler() {
@@ -233,7 +233,9 @@ window.getAndDisplayDevices = async function () {
   const startWebcamButton = document.getElementById("start-webcam");
   startWebcamButton.disabled = false;
 
-  console.debug("Getting list of devices");
+  webcamSelect.innerHTML = '';
+
+  console.debug("獲取設��列表");
 
   const constraints = {
     video: true,
@@ -270,11 +272,11 @@ window.getAndDisplayDevices = async function () {
         continue; // 跳過行動裝置的前置/後置相機選
       }
       const option = document.createElement("li");
-      option.innerHTML = `<a class="dropdown-item" href="#" data-value="${track.getSettings().deviceId}">${track.label || `Camera ${index + 1}`}</a>`;
+      option.innerHTML = `<a class="dropdown-item" href="#" data-value="${ track.getSettings().deviceId }">${ track.label || `Camera ${ index + 1 }` }</a>`;
       webcamSelect.appendChild(option);
     }
 
-    console.debug("Webcams found:", videoTracks);
+    console.debug("找到的攝像頭:", videoTracks);
 
     // 停止流以釋放攝像頭
     stream.getTracks().forEach((track) => track.stop());
@@ -286,10 +288,10 @@ window.getAndDisplayDevices = async function () {
       const startWebcamButton = document.getElementById("start-webcam");
       startWebcamButton.disabled = true;
 
-      console.debug("No webcams found");
+      console.debug("未找到攝像頭");
       return;
     }
-    console.error("Error accessing media devices:", error);
+    console.error("訪問媒體設備時出錯:", error);
   }
 };
 
@@ -298,6 +300,7 @@ document.getElementById('webcam-select').addEventListener('click', function (eve
     const selectedDeviceId = event.target.getAttribute('data-value');
     if (selectedDeviceId) {
       document.getElementById('webcamDropdown').textContent = event.target.textContent;
+      console.debug("選擇的設備ID:", selectedDeviceId);
       window.stopCamera();
       window.startCamera(selectedDeviceId);
     }

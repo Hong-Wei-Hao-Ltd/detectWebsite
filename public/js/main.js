@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (startWebcamButton) {
     startWebcamButton.addEventListener("click", function () {
       const selectedDeviceId = webcamSelectElement.value;
-      console.debug("Webcam button clicked, selectedDeviceId:", selectedDeviceId);
+      console.debug("Webcam 按鈕被點擊，選擇的設備ID:", selectedDeviceId);
 
       if (startWebcamButton.textContent.trim() === window.WebcamButtonText.START) {
         window.startCamera(selectedDeviceId);

@@ -173,28 +173,28 @@ var resGroup = [];
 
 function onOpenCvReady() {
     cvReady = true;
-    console.debug("OpenCV is ready");
+    console.debug("OpenCV 已準備好");
     document.getElementById('result-canvas').style.display = 'none';
     // drawExp(response);
 }
 
 function detectColor(hsv) {
-    console.debug("Detecting color for HSV:", hsv);
+    console.debug("檢測顏色的 HSV 值:", hsv);
     for (const [color, range] of Object.entries(COLOR_RANGES)) {
         const [hMin, sMin, vMin, hMax, sMax, vMax] = range;
         if (hsv[0] >= hMin && hsv[0] <= hMax && hsv[1] >= sMin && hsv[1] <= sMax && hsv[2] >= vMin && hsv[2] <= vMax) {
-            console.debug("Detected color:", color);
+            console.debug("檢測到的顏色:", color);
             return color;
         }
     }
-    console.debug("No color detected");
+    console.debug("未檢測到顏色");
     return null;
 }
 
 function drawExp(response) {
-    console.debug("Starting drawExp function");
+    console.debug("開始 drawExp 函數");
 
-    console.debug("Response:", response);
+    console.debug("回應:", response);
 
     const canvas = document.getElementById('result-canvas');
     const ctx = canvas.getContext('2d');
@@ -212,18 +212,18 @@ function drawExp(response) {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
     img.onload = function () {
-        console.debug("Original image loaded");
+        console.debug("原始圖片加載完成");
         ctx.drawImage(img, 0, 0, imageWidth, imageHeight);
 
         // 確保圖片加載完成後再進行處理
         setTimeout(function () {
             // 找到所有的 Resistor
             const resistors = response.predictions.filter(prediction => prediction.class === "Resistor");
-            console.debug("Found resistors:", resistors);
+            console.debug("找到的電阻:", resistors);
 
             // 繪製電阻及其色環區塊
             resistors.forEach(resistor => {
-                console.debug("Processing resistor:", resistor);
+                console.debug("處理電阻:", resistor);
                 resistor.predictions = []
                 const { x, y, width, height } = resistor;
 
@@ -240,7 +240,7 @@ function drawExp(response) {
                         // 檢查色環區塊是否在電阻範圍內，添加誤差範圍
                         const margin = 20; // 誤差範圍
                         if (px > x - width / 2 - margin && px < x + width / 2 + margin && py > y - height / 2 - margin && py < y + height / 2 + margin) {
-                            console.debug("Found band prediction:", prediction);
+                            console.debug("找到的色環預測:", prediction);
 
                             // 繪製色環區塊
                             ctx.strokeStyle = 'red';
@@ -285,13 +285,13 @@ function drawExp(response) {
                             grayImage.delete();
                             edges.delete();
 
-                            console.debug("Average RGB color:", { r, g, b });
+                            console.debug("平均 RGB 顏色:", { r, g, b });
 
                             const hsv = rgbToHsv(r, g, b);
                             const color = detectColor(hsv);
                             if (color) {
                                 prediction.color = color;
-                                console.debug("Prediction color:", { color });
+                                console.debug("預測顏色:", { color });
                             }
 
                             resistor.predictions.push(prediction);
@@ -350,7 +350,7 @@ function drawExp(response) {
 
                 resGroup.push(resistor);
             });
-            console.debug("Resistor group:", resGroup);
+            console.debug("電阻組:", resGroup);
 
             // 調節畫布大小避免超出整個網頁畫面
             const maxWidth = window.innerWidth * 0.9;
@@ -374,7 +374,7 @@ function drawExp(response) {
         }, 100);
     };
     img.onerror = function (error) {
-        console.error("Error loading original image:", error);
+        console.error("加載原始圖片時出錯:", error);
     };
     const mainCanvas = document.getElementById("main-canvas");
     img.src = mainCanvas.toDataURL("image/jpeg", 1.0);
@@ -426,7 +426,7 @@ function rgbToHsv(r, g, b) {
 
 function detactColor() {
     if (!cvReady) {
-        console.error("OpenCV is not ready");
+        console.error("OpenCV 尚未準備好");
         return;
     }
 

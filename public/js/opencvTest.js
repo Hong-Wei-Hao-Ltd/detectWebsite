@@ -13,17 +13,20 @@ function runnerS() {
         let dst = new cv.Mat();
         cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
         displayStep(src, 'step1'); // 顯示灰階影像
+        console.debug("顯示灰階影像");
 
         // 調整對比度
         let alpha = 1.5; // 對比度控制 (1.0-3.0)
         let beta = 0; // 亮度控制 (0-100)
         src.convertTo(src, -1, alpha, beta);
         displayStep(src, 'step2'); // 顯示調整對比度後的影像
+        console.debug("顯示調整對比度後的影像");
 
         // 移除亮度讓圖片只有純色
         let thresholdValue = 200; // 調整閾值，避免淺色色環消失
         cv.threshold(src, src, thresholdValue, 255, cv.THRESH_BINARY_INV);
         displayStep(src, 'step3'); // 顯示二值化後的影像
+        console.debug("顯示二值化後的影像");
 
         // 檢查白色雜點
         let hsv = new cv.Mat();
@@ -34,11 +37,13 @@ function runnerS() {
         cv.split(hsv, channels);
         brightness = channels.get(2); // V channel
         displayStep(hsv, 'step4'); // 顯示HSV影像
+        console.debug("顯示HSV影像");
 
         let meanBrightness = cv.mean(brightness)[0];
         if (meanBrightness > 200) {
             cv.Canny(src, dst, 50, 100, 3, false);
             displayStep(dst, 'step5'); // 顯示Canny邊緣檢測後的影像
+            console.debug("顯示Canny邊緣檢測後的影像");
 
             // 找到輪廓
             let contours = new cv.MatVector();
@@ -58,6 +63,7 @@ function runnerS() {
             let contourImage = cv.Mat.zeros(dst.rows, dst.cols, cv.CV_8UC1);
             cv.drawContours(contourImage, filteredContours, -1, new cv.Scalar(255, 255, 255), 1);
             displayStep(contourImage, 'step6'); // 顯示輪廓影像
+            console.debug("顯示輪廓影像");
 
             // 繪製電阻顏色框線和文字
             for (let i = 0; i < filteredContours.size(); ++i) {
@@ -109,6 +115,7 @@ function runnerS() {
         } else {
             dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC1);
             displayStep(dst, 'step7'); // 顯示空白影像
+            console.debug("顯示空白影像");
         }
 
         src.delete();

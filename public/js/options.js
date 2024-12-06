@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const lineWidthNumber = document.getElementById("lineWidthNumber");
 
   confidenceRange.addEventListener("input", function () {
-    console.debug("Confidence range input:", confidenceRange.value);
+    console.debug("Confidence range 輸入:", confidenceRange.value);
     confidenceRange.step = 5;
     let value = parseInt(confidenceRange.value, 10);
     if (value > parseInt(confidenceRange.max, 10)) {
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   confidenceNumber.addEventListener("input", function () {
-    console.debug("Confidence number input:", confidenceNumber.value);
+    console.debug("Confidence number 輸入:", confidenceNumber.value);
     confidenceRange.step = 1;
     let value = parseInt(confidenceNumber.value, 10);
     if (value > parseInt(confidenceRange.max, 10)) {
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   overlapRange.addEventListener("input", function () {
-    console.debug("Overlap range input:", overlapRange.value);
+    console.debug("Overlap range 輸入:", overlapRange.value);
     overlapRange.step = 5;
     let value = parseInt(overlapRange.value, 10);
     if (value > parseInt(overlapRange.max, 10)) {
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   overlapNumber.addEventListener("input", function () {
-    console.debug("Overlap number input:", overlapNumber.value);
+    console.debug("Overlap number 輸入:", overlapNumber.value);
     overlapRange.step = 1;
     let value = parseInt(overlapNumber.value, 10);
     if (value > parseInt(overlapRange.max, 10)) {
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   lineWidthRange.addEventListener("input", function () {
-    console.debug("Line width range input:", lineWidthRange.value);
+    console.debug("Line width range 輸入:", lineWidthRange.value);
     lineWidthRange.step = 1;
     let value = parseInt(lineWidthRange.value, 10);
     if (value > parseInt(lineWidthRange.max, 10)) {
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   lineWidthNumber.addEventListener("input", function () {
-    console.debug("Line width number input:", lineWidthNumber.value);
+    console.debug("Line width number 輸入:", lineWidthNumber.value);
     lineWidthRange.step = 1;
     let value = parseInt(lineWidthNumber.value, 10);
     if (value > parseInt(lineWidthRange.max, 10)) {

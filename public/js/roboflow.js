@@ -91,7 +91,7 @@ var infer = function () {
           })
           .then((result) => {
             const elapsedTime = Date.now() - startTime;
-            const minDisplayTime = 1000; // 最小顯示時間 1 秒
+            const minDisplayTime = 1000; // 最小顯示時�� 1 秒
             if (elapsedTime < minDisplayTime) {
               return new Promise((resolve) =>
                 setTimeout(() => resolve(result), minDisplayTime - elapsedTime)
