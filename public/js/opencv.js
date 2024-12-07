@@ -266,7 +266,7 @@ function drawExp(response) {
                             // 顯示邊緣檢測結果
                             displayStepImage(edges, 'Edges');
 
-                            // 計算邊緣區域的平均���色
+                            // 計算邊緣區域的平均顏色
                             let r = 0, g = 0, b = 0, count = 0;
                             for (let i = 0; i < data.length; i += 4) {
                                 if (edges.data[i / 4] > 0) { // 只考慮邊緣區域
