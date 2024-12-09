@@ -1,0 +1,66 @@
+.resistor {
+	text-underline-offset: 0.25em;
+	height: 2.5em;
+}
+.resistor .band {
+	height: 3em;
+}
+
+.resistor .band-black {
+	text-decoration: underline 1.25em;
+	text-decoration-color: black;
+}
+
+.resistor .band-brown {
+	text-decoration: underline 1.25em;
+	text-decoration-color: brown;
+}
+
+.resistor .band-red {
+	text-decoration: underline 1.25em;
+	text-decoration-color: red;
+}
+
+.resistor .band-orange {
+	text-decoration: underline 1.25em;
+	text-decoration-color: orange;
+}
+
+.resistor .band-yellow {
+	text-decoration: underline 1.25em;
+	text-decoration-color: yellow;
+}
+
+.resistor .band-green {
+	text-decoration: underline 1.25em;
+	text-decoration-color: green;
+}
+
+.resistor .band-blue {
+	text-decoration: underline 1.25em;
+	text-decoration-color: blue;
+}
+
+.resistor .band-violet {
+	text-decoration: underline 1.25em;
+	text-decoration-color: violet;
+}
+
+.resistor .band-gray {
+	text-decoration: underline 1.25em;
+	text-decoration-color: gray;
+}
+
+.resistor .band-white {
+	text-decoration: underline 1.25em;
+	text-decoration-color: white;
+}
+.resistor .band-gold {
+	text-decoration: underline 1.25em;
+	text-decoration-color: gold;
+}
+
+.resistor .band-silver {
+	text-decoration: underline 1.25em;
+	text-decoration-color: silver;
+}

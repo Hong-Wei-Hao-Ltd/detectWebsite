@@ -219,6 +219,8 @@ function drawExp(response) {
         setTimeout(function () {
             // 找到所有的 Resistor
             const resistors = response.predictions.filter(prediction => prediction.class === "Resistor");
+            const resultText = document.getElementById('result-text');
+            resultText.innerHTML = '';
             console.debug("找到的電阻:", resistors);
 
             // 繪製電阻及其色環區塊
@@ -314,11 +316,6 @@ function drawExp(response) {
                 // 顯示電阻的4個顏色並且標示上去
                 const sortedPredictions = uniquePredictions.sort((a, b) => a.class_id - b.class_id);
                 let colorText = sortedPredictions.map(prediction => prediction.color).join(' ');
-                if (document.getElementById('showLabel').checked) {
-                    ctx.fillStyle = 'black';
-                    ctx.font = '16px Arial';
-                    ctx.fillText(colorText, x - width / 2, y - height / 2 - 10);
-                }
 
                 // 計算電阻值
                 const firstBand = sortedPredictions.find(prediction => prediction.class_id === 0);
@@ -330,6 +327,10 @@ function drawExp(response) {
                     let resistanceValue = (COLOR_CODES[firstBand.color] * 10 + COLOR_CODES[secondBand.color]) * Math.pow(10, COLOR_CODES[multiplier.color]);
                     const toleranceValue = TOLERANCE_VALUES[tolerance.color];
 
+                    // 檢測是否無法計算
+                    if (Number.isNaN(resistanceValue) || toleranceValue === undefined) {
+                        resistanceValue = -1;
+                    }
                     // 將電阻值轉換為適當的單位
                     let unit = 'Ω';
                     if (resistanceValue >= 1e9) {
@@ -344,8 +345,27 @@ function drawExp(response) {
                     }
 
                     const resistanceText = `${ resistanceValue }${ unit } ±${ toleranceValue || "??" }%`;
-                    if (document.getElementById('showLabel').checked) {
+                    const resistanceElement = document.createElement('div');
+                    resistanceElement.classList.add("font-monospace", "resistor", "h5");
+
+                    const badgeElement = document.createElement('div');
+                    badgeElement.classList.add("badge", "border", "border-warning-subtle", "rounded", "text-bg-light", "band", "shadow");
+
+                    badgeElement.innerHTML = `<span class="band-${ firstBand.color }">${ resistanceText[0] }</span
+                        ><span class="band-${ secondBand.color }">${ resistanceText[1] }</span
+                        ><span class="band-${ multiplier.color }">${ resistanceText[2] }</span
+                        ><span class="band-${ tolerance.color }">${ resistanceText[3] }</span>${ resistanceText.slice(4) }`;
+
+                    if (resistanceValue != -1) {
+                        resistanceElement.appendChild(badgeElement);
+                        resultText.appendChild(resistanceElement);
+                    }
+                    if (document.getElementById('showLabel').checked && resistanceValue != -1) {
+                        ctx.fillStyle = 'black';
+                        ctx.font = '16px Arial';
+                        ctx.fillText(colorText, x - width / 2, y - height / 2 - 10);
                         ctx.fillText(resistanceText, x - width / 2, y - height / 2 - 30);
+
                     }
                 }
 

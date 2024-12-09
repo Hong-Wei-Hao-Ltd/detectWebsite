@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>貢獻者 - 電阻辨識器</title>
+		<link
+			rel="icon"
+			href="./../../../public/images/resistor.png"
+			type="image/png"
+		/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+			crossorigin="anonymous"
+		/>
+		<style>
+			* {
+				transition: background-color 0.5s ease;
+			}
+			[id] {
+				scroll-margin-top: 75px;
+			}
+		</style>
+	</head>
+	<body class="bg-body" data-bs-theme="light">
+		<!-- 頁首 -->
+		<header>
+			<nav class="fixed-top navbar bg-body-secondary">
+				<div class="container-fluid">
+					<h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
+					<button
+						id="theme-toggle"
+						class="btn btn-outline-secondary m-2 d-flex"
+					>
+						<span class="material-icons">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								fill="currentColor"
+								class="bi bi-brightness-high-fill"
+								viewBox="0 0 16 16"
+							>
+								<path
+									d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
+								/>
+							</svg>
+						</span>
+					</button>
+				</div>
+			</nav>
+		</header>
+		<!-- 主要區域 -->
+		<div
+			class="container mt-5 pt-5"
+			style="max-width: 1300px; justify-content: center; margin: auto"
+		>
+			<h1 class="text-center">此專題的貢獻者</h1>
+			<ul
+				id="contribute-list"
+				class="list-group list-group-flush mt-4 p-3"
+			></ul>
+		</div>
+		<!-- 頁尾 -->
+		<footer>
+			<div class="container ps-3 pe-3 pb-3">
+				<div class="row justify-content-lg-center">
+					<div class="text-center col col-lg-10">
+						Made with Github Pages by
+						<a href="https://github.com/Youzi9601" target="_blank"
+							>柚子Youzi</a
+						>
+					</div>
+					<div class="text-center col col-lg-3">
+						此專題的相關<a href="../references/" target="_self"
+							>參考資料</a
+						>
+					</div>
+					<div class="text-center col-lg-auto">
+						© 2024
+						<a
+							href="https://github.com/Hong-Wei-Hao-Ltd/"
+							target="_blank"
+							>Hong-Wei-Hao-Ltd.</a
+						>
+						版權所有
+					</div>
+					<div class="text-center col col-lg-3">
+						<a href="../../../" target="_self">返回首頁</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<!-- 相關程式的載入 -->
+		<script src="../../../public/js/theme.js"></script>
+		<script>
+			const contributors = [
+				{
+					name: "黃博原 老師",
+					url: "#",
+					description: "指導老師",
+					contribution: "指導我們完成這個專題。",
+				},
+				{
+					name: "沈彥良 主任",
+					url: "#",
+					description: "資訊科主任",
+					contribution: "提供場地使用。",
+				},
+				{
+					name: "邵時俊 主任",
+					url: "#",
+					description: "控制科主任",
+					contribution:
+						"提供有關 影像辨識、Matlab、YOLO 的相關資料。",
+				},
+				{
+					name: "侯士東 老師",
+					url: "#",
+					description: "資訊科教師",
+					contribution: "協助參與影片拍攝及專題建議。",
+				},
+			];
+
+			document.addEventListener("DOMContentLoaded", () => {
+				const contributeList =
+					document.getElementById("contribute-list");
+				contributors.forEach((contributor, index) => {
+					const contributorID = `contributor-${index + 1}`;
+					const listItem = document.createElement("li");
+					listItem.className =
+						"list-group-item d-flex justify-content-between align-items-start";
+					listItem.innerHTML = `
+						<div class="ms-2 me-auto">
+							<div class="fw-bold">
+								<a href="#${contributorID}" class="link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">#${
+						index + 1
+					}. </a>
+					<a class="link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="${
+						contributor.url
+					}" target="_blank">${contributor.name}</a>
+				</div>
+							${contributor.description}
+							<p>${contributor.contribution}</p>
+						</div>
+					`;
+					listItem.id = contributorID;
+					contributeList.appendChild(listItem);
+				});
+
+				let isScrolling = false;
+
+				document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+					anchor.addEventListener("click", function (e) {
+						e.preventDefault();
+						const targetId = this.getAttribute("href").substring(1);
+						const targetElement = document.getElementById(targetId);
+						if (targetElement) {
+							isScrolling = true;
+							history.replaceState(null, "", `#${targetId}`);
+
+							targetElement.scrollIntoView({
+								behavior: "smooth",
+							});
+							setTimeout(() => {
+								isScrolling = false;
+							}, 1000);
+						}
+					});
+				});
+
+				window.addEventListener("scroll", () => {
+					if (isScrolling) return;
+
+					let currentId = "";
+					let minDistance = Number.MAX_VALUE;
+					document
+						.querySelectorAll('li[id^="contributor-"]')
+						.forEach((item) => {
+							const rect = item.getBoundingClientRect();
+							const distance = Math.abs(rect.top);
+							if (distance < minDistance && rect.top >= 0) {
+								minDistance = distance;
+								currentId = item.id;
+							}
+						});
+					if (currentId) {
+						history.replaceState(null, "", `#${currentId}`);
+					}
+				});
+			});
+		</script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>

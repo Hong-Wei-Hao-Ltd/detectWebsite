@@ -16,6 +16,7 @@
 			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
 			crossorigin="anonymous"
 		/>
+		<link rel="stylesheet" href="../../public/css/color.css" />
 		<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
@@ -24,7 +25,9 @@
 				max-width: 640px;
 				width: 100%;
 			}
-
+			* {
+				transition: background-color 0.5s ease;
+			}
 			[id] {
 				scroll-margin-top: 75px;
 			}
@@ -34,7 +37,7 @@
 	<body onload="onOpenCvReady()" class="bg-body" data-bs-theme="light">
 		<!-- 頁首 -->
 		<header>
-			<nav class="fixed-top navbar bg-body-secondary">
+			<nav class="fixed-top navbar bg-body-secondary shadow">
 				<div class="container-fluid">
 					<h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
 					<button
@@ -774,7 +777,7 @@
 						<!-- <button id="process-canvas" class="btn btn-primary">
 					處理畫布
 				</button> -->
-						<div class="d-inline-flex">
+						<div class="d-inline-flex pb-3">
 							<button id="submit" class="btn btn-primary">
 								執行
 							</button>
@@ -795,11 +798,11 @@
 								在新分頁開啟圖片
 							</button>
 						</div>
-						<div class="pt-3">
-							<div class="pb-2"></div>
+						<div class="rounded-1">
+							<div class="pb-1 mt-2" id="result-text"></div>
 							<canvas
 								id="result-canvas"
-								class="border card"
+								class="border card shadow-sm"
 								style="display: block; margin: 0"
 							></canvas>
 						</div>
@@ -810,17 +813,35 @@
 		</div>
 		<!-- 頁尾 -->
 		<footer>
-			<div class="ps-3 pe-3 text-center">
-				此作品的相關<a href="../source/references/" target="_blank"
-					>參考資料</a
-				>。
-			</div>
-			<div class="ps-3 pe-3 pb-3 text-center">
-				© 2024
-				<a href="https://github.com/Hong-Wei-Hao-Ltd/" target="_blank"
-					>Hong-Wei-Hao-Ltd.</a
-				>
-				版權所有
+			<div class="container ps-3 pe-3 pb-3">
+				<div class="row justify-content-lg-center">
+					<div class="text-center col col-lg-10">
+						Made with Github Pages by
+						<a href="https://github.com/Youzi9601" target="_blank"
+							>柚子Youzi</a
+						>
+					</div>
+					<div class="text-center col-lg-5">
+						© 2024
+						<a
+							href="https://github.com/Hong-Wei-Hao-Ltd/"
+							target="_blank"
+							>Hong-Wei-Hao-Ltd.</a
+						>
+						版權所有
+					</div>
+					<div class="text-center col col-lg-5">
+						此專題的相關<a
+							href="../source/references/"
+							target="_self"
+							>參考資料</a
+						>，以及協助我們的<a
+							href="../source/contribute/"
+							target="_self"
+							>貢獻者</a
+						>。
+					</div>
+				</div>
 			</div>
 		</footer>
 		<!-- 相關程式的載入 -->
