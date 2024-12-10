@@ -351,10 +351,14 @@ function drawExp(response) {
                     const badgeElement = document.createElement('div');
                     badgeElement.classList.add("badge", "border", "border-warning-subtle", "rounded", "text-bg-light", "band", "shadow");
 
-                    badgeElement.innerHTML = `<span class="band-${ firstBand.color }">${ resistanceText[0] }</span
-                        ><span class="band-${ secondBand.color }">${ resistanceText[1] }</span
-                        ><span class="band-${ multiplier.color }">${ resistanceText[2] }</span
-                        ><span class="band-${ tolerance.color }">${ resistanceText[3] }</span>${ resistanceText.slice(4) }`;
+                    badgeElement.innerHTML = `<p class="p-0 m-1">${ resistanceText }</p>
+                    <span class="rounded-start-pill" style="background-color: burlywood;">&nbsp;</span><span
+						class="band-${ firstBand.color }">&emsp;</span><span class="rounded-0"
+						style="background-color: burlywood;">&nbsp;</span><span class="band-${ secondBand.color }">&emsp;</span><span
+						class="rounded-0" style="background-color: burlywood;">&nbsp;</span><span
+						class="band-${ multiplier.color }">&emsp;</span><span class="rounded-0"
+						style="background-color: burlywood;">&nbsp;</span><span class="band-${ tolerance.color }">&emsp;</span><span
+						class="rounded-end-pill" style="background-color: burlywood;">&nbsp;</span>`;
 
                     if (resistanceValue != -1) {
                         resistanceElement.appendChild(badgeElement);
