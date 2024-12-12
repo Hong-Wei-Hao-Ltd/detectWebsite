@@ -64,27 +64,47 @@ document.addEventListener("DOMContentLoaded", function () {
   if (uploadInputElement) {
     uploadInputElement.addEventListener("change", function (e) {
       let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.onload = function (event) {
-        displayImage(event.target.result);
-      };
-      reader.readAsDataURL(file);
+      console.debug("上傳的檔案:", file);
+      console.debug("檔案類型:", file.type || "未知");
+      if (file.type === "image/heic" || file.type === "image/heif") {
+        convertHeicToJpeg(file).then(displayImage);
+      } else if (file.type === "image/png" || file.type === "image/jpeg") {
+        let reader = new FileReader();
+        reader.onload = function (event) {
+          displayImage(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert("只允許上傳 PNG 或 JPEG 檔案");
+        e.target.value = "";
+      }
     });
   }
 
   if (urlInputElement) {
-    urlInputElement.addEventListener("change", function () {
+    urlInputElement.addEventListener("change", async function () {
       let url = this.value;
       if (url) {
-        displayImage(url);
+        const isValidImage = await checkImage(url);
+        if (isValidImage) {
+          displayImage(url);
+        } else {
+          alert("URL 不是有效的圖片");
+        }
       }
     });
   }
+
   if (urlSubmitElement) {
-    urlSubmitElement.addEventListener("click", function () {
+    urlSubmitElement.addEventListener("click", async function () {
       let url = urlInputElement.value;
       if (url) {
-        displayImage(url);
+        const isValidImage = await checkImage(url);
+        if (isValidImage) {
+          displayImage(url);
+        } else {
+          alert("URL 不是有效的圖片");
+        }
       }
     });
   }
@@ -125,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const newTab = window.open();
     newTab.document.write(`
       <!DOCTYPE html>
-      <html lang="en">
+      <html lang="zh-TW">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -218,7 +238,7 @@ function displayImage(src) {
     let currentScale = 1;
 
     while (canvas.width * currentScale > maxWidth || canvas.height * currentScale > maxHeight) {
-      currentScale -= 0.005;
+      currentScale -= 0.01;
     }
 
     canvas.style.width = `${ canvas.width * currentScale }px`;
@@ -226,4 +246,51 @@ function displayImage(src) {
     canvas.style.margin = "0";
   };
   img.src = src;
+}
+
+/**
+ * 將 HEIC/HEIF 檔案轉換為 JPEG
+ * @param {File} file - HEIC/HEIF 檔案
+ * @returns {Promise<string>} - 轉換後的 JPEG 檔案 URL
+ */
+function convertHeicToJpeg(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      heic2any({
+        blob: event.target.result,
+        toType: "image/jpeg",
+      })
+        .then((conversionResult) => {
+          const jpegBlob = conversionResult;
+          const jpegUrl = URL.createObjectURL(jpegBlob);
+          resolve(jpegUrl);
+        })
+        .catch(reject);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function checkImage(url) {
+  let loadingElement = document.getElementById("input-loading");
+  loadingElement.style.display = "block";
+  return new Promise((resolve) => {
+    var image = new Image();
+    image.onload = function () {
+      if (this.width > 0) {
+        console.debug("image exists: ", url);
+        loadingElement.style.display = "none";
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    };
+    image.onerror = function () {
+      console.debug("image doesn't exist: ", url);
+      loadingElement.style.display = "none";
+      resolve(false);
+    };
+    image.src = url;
+  });
 }

@@ -1,25 +1,49 @@
+// 在 DOMContentLoaded 之前執行主題應用
+const savedTheme = localStorage.getItem("theme");
+const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+if (savedTheme) {
+    document.body.setAttribute("data-bs-theme", savedTheme);
+} else if (prefersDarkScheme.matches) {
+    document.body.setAttribute("data-bs-theme", "dark");
+} else {
+    document.body.setAttribute("data-bs-theme", "light");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const themeToggleButton = document.getElementById("theme-toggle");
-    // 根據使用者裝置主題於加載時切換主題
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const body = document.body;
-    const currentTheme = body.getAttribute("data-bs-theme");
-    if (prefersDarkScheme && currentTheme !== "dark") {
-        toggleTheme();
-    } else if (!prefersDarkScheme && currentTheme !== "light") {
-        toggleTheme();
+
+    // 根據使用者裝置主題於加載時切換主題
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme) {
+        body.setAttribute("data-bs-theme", savedTheme);
+    } else if (prefersDarkScheme.matches) {
+        body.setAttribute("data-bs-theme", "dark");
+    } else {
+        body.setAttribute("data-bs-theme", "light");
     }
 
     if (themeToggleButton) {
-        themeToggleButton.addEventListener("click", toggleTheme);
+        themeToggleButton.addEventListener("click", () => {
+            toggleTheme();
+            localStorage.setItem("theme", body.getAttribute("data-bs-theme"));
+        });
     }
 
+    prefersDarkScheme.addEventListener("change", (e) => {
+        const newColorScheme = e.matches ? "dark" : "light";
+        if (body.getAttribute("data-bs-theme") !== newColorScheme) {
+            toggleTheme();
+            localStorage.setItem("theme", newColorScheme);
+        }
+    });
+
     /**
- * 切換主題
- */
+     * 切換主題
+     */
     function toggleTheme() {
-        const body = document.body;
         const currentTheme = body.getAttribute("data-bs-theme");
         const newTheme = currentTheme === "light" ? "dark" : "light";
         body.setAttribute("data-bs-theme", newTheme);
@@ -32,4 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.toggleTheme = toggleTheme;
-})
+});
+
+window.addEventListener("load", () => {
+    const style = document.createElement("style");
+    style.innerHTML = `* { transition: background-color 0.5s ease; }`;
+    document.head.appendChild(style);
+});

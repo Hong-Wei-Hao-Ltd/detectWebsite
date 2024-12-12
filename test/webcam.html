@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +7,15 @@
 </head>
 <body>
 
-  <h1>选择摄像头</h1>
+  <h1>選擇攝像頭</h1>
   
   <!-- Dropdown to list available webcams -->
   <select id="cameraSelect">
-    <option value="">请选择摄像头</option>
+    <option value="">請選擇攝像頭</option>
   </select>
   
-  <button id="startBtn">打开摄像头</button>
-  <button id="stopBtn" disabled>关闭摄像头</button>
+  <button id="startBtn">打開攝像頭</button>
+  <button id="stopBtn" disabled>關閉攝像頭</button>
   
   <video id="videoElement" width="640" height="480" autoplay></video>
 
@@ -33,7 +33,7 @@
         const cameras = devices.filter(device => device.kind === 'videoinput');
         
         // Clear existing options
-        cameraSelect.innerHTML = '<option value="">请选择摄像头</option>';
+        cameraSelect.innerHTML = '<option value="">請選擇攝像頭</option>';
 
         cameras.forEach(device => {
           const option = document.createElement('option');

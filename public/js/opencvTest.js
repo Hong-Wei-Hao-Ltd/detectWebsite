@@ -4,7 +4,7 @@ function runnerS() {
     img.src = "https://m.media-amazon.com/images/I/61TXiBJbG2L.jpg";
     img.onload = function () {
         let canvas = document.createElement('canvas');
-        let ctx = canvas.getContext('2d');
+        let ctx = canvas.getContext('2d', { willReadFrequently: true });
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);

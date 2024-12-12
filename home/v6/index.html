@@ -20,6 +20,17 @@
 		<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				if (window.location.pathname.endsWith("index.html")) {
+					window.history.replaceState(
+						{},
+						document.title,
+						window.location.pathname.replace("index.html", "")
+					);
+				}
+			});
+		</script>
 		<style>
 			#webcam-container {
 				max-width: 640px;
@@ -34,28 +45,72 @@
 	<body onload="onOpenCvReady()" class="bg-body" data-bs-theme="light">
 		<!-- 頁首 -->
 		<header>
-			<nav class="fixed-top navbar bg-body-secondary shadow">
+			<nav
+				class="navbar navbar-expand-lg fixed-top bg-body-secondary shadow"
+			>
 				<div class="container-fluid">
 					<h1 class="h1 m-2 navbar-brand">電阻識別器</h1>
 					<button
-						id="theme-toggle"
-						class="btn btn-outline-secondary m-2 d-flex"
+						class="navbar-toggler"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target="#navbarNav"
+						aria-controls="navbarNav"
+						aria-expanded="false"
+						aria-label="Toggle navigation"
 					>
-						<span class="material-icons">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="16"
-								height="16"
-								fill="currentColor"
-								class="bi bi-brightness-high-fill"
-								viewBox="0 0 16 16"
-							>
-								<path
-									d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
-								/>
-							</svg>
-						</span>
+						<span class="navbar-toggler-icon"></span>
 					</button>
+					<div class="collapse navbar-collapse" id="navbarNav">
+						<ul class="navbar-nav me-auto">
+							<!-- <li class="nav-item">
+								<a
+									class="nav-link active"
+									aria-current="page"
+									href="#"
+									>電阻識別器</a
+								>
+							</li> -->
+							<li class="nav-item">
+								<a
+									class="nav-link"
+									href="./../source/contribute/"
+									>貢獻者</a
+								>
+							</li>
+							<li class="nav-item">
+								<a
+									class="nav-link"
+									href="./../source/references/"
+									>參考資料</a
+								>
+							</li>
+						</ul>
+						<div class="d-flex">
+							<button
+								id="theme-toggle"
+								class="btn btn-outline-secondary m-2 d-flex"
+							>
+								<span class="material-icons">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="16"
+										height="16"
+										fill="currentColor"
+										class="bi bi-brightness-high-fill"
+										viewBox="0 0 16 16"
+									>
+										<path
+											d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
+										/>
+									</svg>
+								</span>
+								<span class="d-lg-none ms-2" id="bd-theme-text"
+									>切換主題</span
+								>
+							</button>
+						</div>
+					</div>
 				</div>
 			</nav>
 		</header>

@@ -197,7 +197,7 @@ function drawExp(response) {
     console.debug("回應:", response);
 
     const canvas = document.getElementById('result-canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     const imageWidth = response.image.width;
     const imageHeight = response.image.height;
 
@@ -411,7 +411,7 @@ function displayStepImage(mat, stepName) {
     canvas.width = mat.cols;
     canvas.height = mat.rows;
     document.body.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d',{ willReadFrequently: true });
 
     // 確保輸入數據長度正確
     const clampedArray = new Uint8ClampedArray(mat.data.length * 4);
