@@ -44,7 +44,7 @@ var infer = function () {
   let startTime = Date.now();
   let timerInterval = setInterval(() => {
     let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-    timerDiv.textContent = `(${elapsedTime}s)`;
+    timerDiv.textContent = `(${ elapsedTime }s)`;
   }, 1000);
 
   document.getElementById("output").innerHTML = "運算中...";
@@ -191,6 +191,13 @@ var setupButtonListeners = function () {
   // 提交表單時運行推理
   document.getElementById("submit").innerHTML = runButton.RUN;
   document.getElementById("submit").addEventListener("click", function (event) {
+    this.dataset.clicked = true;
+    if (checkCanvasEmpty()) {
+      const stepG1 = document.getElementById('stepG1');
+      stepG1.scrollIntoView();
+      updateSubmitButtonState()
+      return;
+    }
     event.preventDefault();
     infer();
   });
@@ -269,7 +276,7 @@ var getSettingsFromForm = function (cb) {
     img.crossOrigin = "Anonymous";
     img.onload = function () {
       var canvas = document.getElementById("main-canvas");
-      var ctx = canvas.getContext("2d");
+      var ctx = canvas.getContext("2d", { willReadFrequently: true });
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
@@ -348,7 +355,7 @@ var resizeImage = function (base64Str) {
       }
       canvas.width = width;
       canvas.height = height;
-      var ctx = canvas.getContext("2d");
+      var ctx = canvas.getContext("2d", { willReadFrequently: true });
       ctx.drawImage(img, 0, 0, width, height);
       resolve(canvas.toDataURL("image/jpeg", 1.0));
     };

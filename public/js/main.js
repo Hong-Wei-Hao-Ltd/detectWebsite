@@ -26,6 +26,18 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       window.expDemo = false;
     }
+
+    const canvas = document.getElementById('main-canvas');
+    // 清除畫布內容
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.style.width = '100%';
+    canvas.style.height = '5rem';
+    canvas.style.margin = '0';
+
+    updateSubmitButtonState();
+
+    // 暫停攝像機
     window.stopCamera();
   }
 
@@ -135,6 +147,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 初始化顯示
   updateInputDisplay();
+  updateSubmitButtonState();
+
   // window.getAndDisplayDevices();
 
   // 顯示結果於新分頁
@@ -217,8 +231,9 @@ document.addEventListener("DOMContentLoaded", function () {
  */
 function displayImage(src) {
   let canvas = document.getElementById("main-canvas");
-  let context = canvas.getContext("2d");
+  let context = canvas.getContext("2d", { willReadFrequently: true });
   let img = new Image();
+  img.crossOrigin = "Anonymous";
 
   // 顯示 input-loading 元素
   let loadingElement = document.getElementById("input-loading");
@@ -244,6 +259,8 @@ function displayImage(src) {
     canvas.style.width = `${ canvas.width * currentScale }px`;
     canvas.style.height = `${ canvas.height * currentScale }px`;
     canvas.style.margin = "0";
+
+    updateSubmitButtonState(); // 更新按鈕狀態
   };
   img.src = src;
 }
@@ -293,4 +310,33 @@ function checkImage(url) {
     };
     image.src = url;
   });
+}
+
+function checkCanvasEmpty() {
+  const canvas = document.getElementById('main-canvas');
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  const pixelBuffer = new Uint32Array(
+    context.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+  );
+  return !pixelBuffer.some(color => color !== 0);
+}
+
+function updateSubmitButtonState() {
+  const submitButton = document.getElementById('submit');
+  const stepG1 = document.getElementById('stepG1');
+  const previewMessage = document.getElementById('preview-message');
+
+  if (checkCanvasEmpty() && submitButton.dataset.clicked) {
+    submitButton.disabled = true;
+    previewMessage.style.display = 'block';
+    previewMessage.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+</svg>預覽輸入沒有內容`;
+    stepG1.classList.add("rounded", "border", "border-danger");
+
+  } else {
+    submitButton.disabled = false;
+    previewMessage.style.display = 'none';
+    stepG1.classList.remove("rounded", "border", "border-danger");
+  }
 }

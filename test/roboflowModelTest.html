@@ -1,519 +1,579 @@
 <html>
-  <head>
-    <title>Roboflow 模型範例</title>
-    <meta name="robots" content="noindex" />
+	<head>
+		<title>Roboflow 模型範例</title>
+		<meta name="robots" content="noindex" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"></script>
 
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.9.6/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="../public/css/style.css" />
-  </head>
+		<link
+			href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.9.6/tailwind.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+			integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="../public/css/style.css" />
+	</head>
 
-  <body class="dark-mode">
-    <form id="inputForm">
-      <div class="header">
-        <div class="header__grid">
-          <!-- <img class="header__logo"
+	<body class="dark-mode">
+		<form id="inputForm">
+			<div class="header">
+				<div class="header__grid">
+					<!-- <img class="header__logo"
           src="https://uploads-ssl.webflow.com/5f6bc60e665f54545a1e52a5/6143750f1177056d60fc52d9_roboflow_logomark_inference.png"
           alt="Roboflow Inference"> -->
-          <div>
-            <label class="header__label" for="model">模型</label>
-            <input class="input" type="text" id="model" />
-          </div>
-          <div>
-            <label class="header__label" for="version">版本</label>
-            <input class="input" type="number" id="version" />
-          </div>
-          <div>
-            <label class="header__label" for="api_key">API 金鑰</label>
-            <input class="input" type="text" id="api_key" />
-          </div>
-        </div>
-      </div>
+					<div>
+						<label class="header__label" for="model">模型</label>
+						<input class="input" type="text" id="model" />
+					</div>
+					<div>
+						<label class="header__label" for="version">版本</label>
+						<input class="input" type="number" id="version" />
+					</div>
+					<div>
+						<label class="header__label" for="api_key"
+							>API 金鑰</label
+						>
+						<input class="input" type="text" id="api_key" />
+					</div>
+				</div>
+			</div>
 
-      <div class="content">
-        <div class="content__grid">
-          <div class="col-12-s6-m4" id="method">
-            <label class="input__label">上傳方式</label>
-            <div class="flex">
-              <button
-                data-value="upload"
-                id="computerButton"
-                class="bttn left fill active"
-              >
-                上傳
-              </button>
-              <button data-value="url" id="urlButton" class="bttn fill">
-                URL
-              </button>
-              <button
-                data-value="camera"
-                id="cameraButton"
-                class="bttn right fill"
-              >
-                相機
-              </button>
-            </div>
-          </div>
+			<div class="content">
+				<div class="content__grid">
+					<div class="col-12-s6-m4" id="method">
+						<label class="input__label">上傳方式</label>
+						<div class="flex">
+							<button
+								data-value="upload"
+								id="computerButton"
+								class="bttn left fill active"
+							>
+								上傳
+							</button>
+							<button
+								data-value="url"
+								id="urlButton"
+								class="bttn fill"
+							>
+								URL
+							</button>
+							<button
+								data-value="camera"
+								id="cameraButton"
+								class="bttn right fill"
+							>
+								相機
+							</button>
+						</div>
+					</div>
 
-          <div class="col-12-m8" id="fileSelectionContainer">
-            <label class="input__label" for="file">選擇檔案</label>
-            <div class="flex">
-              <input
-                class="input input--left flex-1"
-                type="text"
-                id="fileName"
-                disabled
-              />
-              <button id="fileMock" class="bttn right active">瀏覽</button>
-            </div>
-            <input
-              style="display: none"
-              type="file"
-              id="file"
-              accept=".jpg,.jpeg,.png"
-            />
-          </div>
+					<div class="col-12-m8" id="fileSelectionContainer">
+						<label class="input__label" for="file">選擇檔案</label>
+						<div class="flex">
+							<input
+								class="input input--left flex-1"
+								type="text"
+								id="fileName"
+								disabled
+							/>
+							<button id="fileMock" class="bttn right active">
+								瀏覽
+							</button>
+						</div>
+						<input
+							style="display: none"
+							type="file"
+							id="file"
+							accept=".jpg,.jpeg,.png"
+						/>
+					</div>
 
-          <div class="col-12-m8" id="urlContainer">
-            <label class="input__label" for="file">輸入圖片 URL</label>
-            <div class="flex">
-              <input
-                type="text"
-                id="url"
-                placeholder="https://path.to/your.jpg"
-                class="input"
-              /><br />
-            </div>
-          </div>
+					<div class="col-12-m8" id="urlContainer">
+						<label class="input__label" for="file"
+							>輸入圖片 URL</label
+						>
+						<div class="flex">
+							<input
+								type="text"
+								id="url"
+								placeholder="https://path.to/your.jpg"
+								class="input"
+							/><br />
+						</div>
+					</div>
 
-          <div class="col-12-m8" id="cameraContainer" style="display: none">
-            <label class="input__label" for="camera">相機</label>
-            <div class="flex">
-              <video id="camera" width="100%" height="auto" autoplay></video>
-              <button id="captureButton" class="bttn right active">拍照</button>
-            </div>
-            <canvas id="cameraCanvas" style="display: none"></canvas>
-          </div>
+					<div
+						class="col-12-m8"
+						id="cameraContainer"
+						style="display: none"
+					>
+						<label class="input__label" for="camera">相機</label>
+						<div class="flex">
+							<video
+								id="camera"
+								width="100%"
+								height="auto"
+								autoplay
+							></video>
+							<button
+								id="captureButton"
+								class="bttn right active"
+							>
+								拍照
+							</button>
+						</div>
+						<canvas
+							id="cameraCanvas"
+							style="display: none"
+						></canvas>
+					</div>
 
-          <div class="col-12-m6">
-            <label class="input__label" for="classes">篩選類別</label>
-            <input
-              type="text"
-              id="classes"
-              placeholder="輸入類別名稱"
-              class="input"
-            /><br />
-            <span class="text--small">用逗號分隔名稱</span>
-          </div>
+					<div class="col-12-m6">
+						<label class="input__label" for="classes"
+							>篩選類別</label
+						>
+						<input
+							type="text"
+							id="classes"
+							placeholder="輸入類別名稱"
+							class="input"
+						/><br />
+						<span class="text--small">用逗號分隔名稱</span>
+					</div>
 
-          <div class="col-6-m3 relative">
-            <label class="input__label" for="confidence">最低信心度</label>
-            <div>
-              <i class="fas fa-crown"></i>
-              <span class="icon">%</span>
-              <input
-                type="number"
-                id="confidence"
-                value="40"
-                max="100"
-                accuracy="2"
-                min="0"
-                class="input input__icon"
-              />
-            </div>
-          </div>
-          <div class="col-6-m3 relative">
-            <label class="input__label" for="overlap">最大重疊率</label>
-            <div>
-              <i class="fas fa-object-ungroup"></i>
-              <span class="icon">%</span>
-              <input
-                type="number"
-                id="overlap"
-                value="30"
-                max="100"
-                accuracy="2"
-                min="0"
-                class="input input__icon"
-              />
-            </div>
-          </div>
-          <div class="col-6-m3" id="format">
-            <label class="input__label">推論結果</label>
-            <div>
-              <button
-                id="imageButton"
-                data-value="image"
-                class="bttn left fill active"
-              >
-                圖片
-              </button>
-              <button id="jsonButton" data-value="json" class="bttn right fill">
-                JSON
-              </button>
-            </div>
-          </div>
-          <div class="col-12 content__grid" id="imageOptions">
-            <div class="col-12-s6-m4" id="labels">
-              <label class="input__label">標籤</label>
-              <div>
-                <button class="bttn left">關閉</button>
-                <button data-value="on" class="bttn right active">開啟</button>
-              </div>
-            </div>
-            <div class="col-12-s6-m4" id="stroke">
-              <label class="input__label">線條寬度</label>
-              <div>
-                <button data-value="1" class="bttn left">1px</button>
-                <button data-value="2" class="bttn active">2px</button>
-                <button data-value="5" class="bttn">5px</button>
-                <button data-value="10" class="bttn right">10px</button>
-              </div>
-            </div>
-          </div>
-          <div class="col-12">
-            <button type="submit" value="Run Inference" class="bttn__primary">
-              執行推論
-            </button>
-          </div>
-        </div>
-        <div class="result" id="resultContainer">
-          <div class="divider"></div>
-          <div class="result__header">
-            <h3 class="headline">結果</h3>
-          </div>
-          <pre id="output" class="codeblock"> 這是你的 JSON </pre>
-        </div>
-      </div>
-    </form>
+					<div class="col-6-m3 relative">
+						<label class="input__label" for="confidence"
+							>最低信心度</label
+						>
+						<div>
+							<i class="fas fa-crown"></i>
+							<span class="icon">%</span>
+							<input
+								type="number"
+								id="confidence"
+								value="40"
+								max="100"
+								accuracy="2"
+								min="0"
+								class="input input__icon"
+							/>
+						</div>
+					</div>
+					<div class="col-6-m3 relative">
+						<label class="input__label" for="overlap"
+							>最大重疊率</label
+						>
+						<div>
+							<i class="fas fa-object-ungroup"></i>
+							<span class="icon">%</span>
+							<input
+								type="number"
+								id="overlap"
+								value="30"
+								max="100"
+								accuracy="2"
+								min="0"
+								class="input input__icon"
+							/>
+						</div>
+					</div>
+					<div class="col-6-m3" id="format">
+						<label class="input__label">推論結果</label>
+						<div>
+							<button
+								id="imageButton"
+								data-value="image"
+								class="bttn left fill active"
+							>
+								圖片
+							</button>
+							<button
+								id="jsonButton"
+								data-value="json"
+								class="bttn right fill"
+							>
+								JSON
+							</button>
+						</div>
+					</div>
+					<div class="col-12 content__grid" id="imageOptions">
+						<div class="col-12-s6-m4" id="labels">
+							<label class="input__label">標籤</label>
+							<div>
+								<button class="bttn left">關閉</button>
+								<button
+									data-value="on"
+									class="bttn right active"
+								>
+									開啟
+								</button>
+							</div>
+						</div>
+						<div class="col-12-s6-m4" id="stroke">
+							<label class="input__label">線條寬度</label>
+							<div>
+								<button data-value="1" class="bttn left">
+									1px
+								</button>
+								<button data-value="2" class="bttn active">
+									2px
+								</button>
+								<button data-value="5" class="bttn">5px</button>
+								<button data-value="10" class="bttn right">
+									10px
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12">
+						<button
+							type="submit"
+							value="Run Inference"
+							class="bttn__primary"
+						>
+							執行推論
+						</button>
+					</div>
+				</div>
+				<div class="result" id="resultContainer">
+					<div class="divider"></div>
+					<div class="result__header">
+						<h3 class="headline">結果</h3>
+					</div>
+					<pre id="output" class="codeblock"> 這是你的 JSON </pre>
+				</div>
+			</div>
+		</form>
 
-    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
-      切換深色模式
-    </button>
+		<button class="dark-mode-toggle" onclick="toggleDarkMode()">
+			切換深色模式
+		</button>
 
-    <script type="text/javascript">
-      $(function () {
-        //values pulled from query string
-        $("#model").val("resistance-eg6us");
-        $("#version").val("3");
-        $("#api_key").val("UB9aRpCvDKvf0BkR3BGd");
+		<script type="text/javascript">
+			$(function () {
+				//values pulled from query string
+				$("#model").val("resistance-eg6us");
+				$("#version").val("3");
+				$("#api_key").val("UB9aRpCvDKvf0BkR3BGd");
 
-        setupButtonListeners();
-        setupThemeToggle();
-        setupCamera();
-        // 頁面載入時自動切換到深色模式
-        $("body").addClass("dark-mode");
-      });
+				setupButtonListeners();
+				setupThemeToggle();
+				setupCamera();
+				// 頁面載入時自動切換到深色模式
+				$("body").addClass("dark-mode");
+			});
 
-      var infer = function () {
-        $("#output").html("推論中...");
-        $("#resultContainer").show();
-        $("html").scrollTop(100000);
+			var infer = function () {
+				$("#output").html("推論中...");
+				$("#resultContainer").show();
+				$("html").scrollTop(100000);
 
-        getSettingsFromForm(function (settings) {
-          settings.error = function (xhr) {
-            $("#output")
-              .html("")
-              .append(
-                [
-                  "載入回應時出錯。",
-                  "",
-                  "檢查你的 API 金鑰、模型、版本，",
-                  "和其他參數",
-                  "然後再試一次。",
-                ].join("\n")
-              );
-          };
+				getSettingsFromForm(function (settings) {
+					settings.error = function (xhr) {
+						$("#output")
+							.html("")
+							.append(
+								[
+									"載入回應時出錯。",
+									"",
+									"檢查你的 API 金鑰、模型、版本，",
+									"和其他參數",
+									"然後再試一次。",
+								].join("\n")
+							);
+					};
 
-          $.ajax(settings).then(function (response) {
-            if (settings.format == "json") {
-              var pretty = $("<pre>");
-              var formatted = JSON.stringify(response, null, 4);
+					$.ajax(settings).then(function (response) {
+						if (settings.format == "json") {
+							var pretty = $("<pre>");
+							var formatted = JSON.stringify(response, null, 4);
 
-              pretty.html(formatted);
-              $("#output").html("").append(pretty);
-              $("html").scrollTop(100000);
-            } else {
-              var arrayBufferView = new Uint8Array(response);
-              var blob = new Blob([arrayBufferView], {
-                type: "image\/jpeg",
-              });
-              var base64image = window.URL.createObjectURL(blob);
+							pretty.html(formatted);
+							$("#output").html("").append(pretty);
+							$("html").scrollTop(100000);
+						} else {
+							var arrayBufferView = new Uint8Array(response);
+							var blob = new Blob([arrayBufferView], {
+								type: "image\/jpeg",
+							});
+							var base64image = window.URL.createObjectURL(blob);
 
-              var img = $("<img/>");
-              img.get(0).onload = function () {
-                $("html").scrollTop(100000);
-              };
-              img.attr("src", base64image);
-              $("#output").html("").append(img);
-            }
-          });
-        });
-      };
+							var img = $("<img/>");
+							img.get(0).onload = function () {
+								$("html").scrollTop(100000);
+							};
+							img.attr("src", base64image);
+							$("#output").html("").append(img);
+						}
+					});
+				});
+			};
 
-      var retrieveDefaultValuesFromLocalStorage = function () {
-        try {
-          var api_key = localStorage.getItem("rf.api_key");
-          var model = localStorage.getItem("rf.model");
-          var format = localStorage.getItem("rf.format");
+			var retrieveDefaultValuesFromLocalStorage = function () {
+				try {
+					var api_key = localStorage.getItem("rf.api_key");
+					var model = localStorage.getItem("rf.model");
+					var format = localStorage.getItem("rf.format");
 
-          if (api_key) $("#api_key").val(api_key);
-          if (model) $("#model").val(model);
-          if (format) $("#format").val(format);
-        } catch (e) {
-          // localStorage disabled
-        }
+					if (api_key) $("#api_key").val(api_key);
+					if (model) $("#model").val(model);
+					if (format) $("#format").val(format);
+				} catch (e) {
+					// localStorage disabled
+				}
 
-        $("#model").change(function () {
-          localStorage.setItem("rf.model", $(this).val());
-        });
+				$("#model").change(function () {
+					localStorage.setItem("rf.model", $(this).val());
+				});
 
-        $("#api_key").change(function () {
-          localStorage.setItem("rf.api_key", $(this).val());
-        });
+				$("#api_key").change(function () {
+					localStorage.setItem("rf.api_key", $(this).val());
+				});
 
-        $("#format").change(function () {
-          localStorage.setItem("rf.format", $(this).val());
-        });
-      };
+				$("#format").change(function () {
+					localStorage.setItem("rf.format", $(this).val());
+				});
+			};
 
-      var setupThemeToggle = function () {
-        $("#themeToggle").click(function () {
-          $("body").toggleClass("dark-mode");
-        });
-      };
+			var setupThemeToggle = function () {
+				$("#themeToggle").click(function () {
+					$("body").toggleClass("dark-mode");
+				});
+			};
 
-      var toggleDarkMode = function () {
-        document.body.classList.toggle("dark-mode");
-      };
+			var toggleDarkMode = function () {
+				document.body.classList.toggle("dark-mode");
+			};
 
-      var setupButtonListeners = function () {
-        // run inference when the form is submitted
-        $("#inputForm").submit(function () {
-          infer();
-          return false;
-        });
+			var setupButtonListeners = function () {
+				// run inference when the form is submitted
+				$("#inputForm").submit(function () {
+					infer();
+					return false;
+				});
 
-        // make the buttons blue when clicked
-        // and show the proper "Select file" or "Enter url" state
-        $(".bttn").click(function () {
-          $(this).parent().find(".bttn").removeClass("active");
-          $(this).addClass("active");
+				// make the buttons blue when clicked
+				// and show the proper "Select file" or "Enter url" state
+				$(".bttn").click(function () {
+					$(this).parent().find(".bttn").removeClass("active");
+					$(this).addClass("active");
 
-          if ($("#computerButton").hasClass("active")) {
-            $("#fileSelectionContainer").show();
-            $("#urlContainer").hide();
-            $("#cameraContainer").hide();
-          } else if ($("#urlButton").hasClass("active")) {
-            $("#fileSelectionContainer").hide();
-            $("#urlContainer").show();
-            $("#cameraContainer").hide();
-          } else {
-            $("#fileSelectionContainer").hide();
-            $("#urlContainer").hide();
-            $("#cameraContainer").show();
-          }
+					if ($("#computerButton").hasClass("active")) {
+						$("#fileSelectionContainer").show();
+						$("#urlContainer").hide();
+						$("#cameraContainer").hide();
+					} else if ($("#urlButton").hasClass("active")) {
+						$("#fileSelectionContainer").hide();
+						$("#urlContainer").show();
+						$("#cameraContainer").hide();
+					} else {
+						$("#fileSelectionContainer").hide();
+						$("#urlContainer").hide();
+						$("#cameraContainer").show();
+					}
 
-          if ($("#jsonButton").hasClass("active")) {
-            $("#imageOptions").hide();
-          } else {
-            $("#imageOptions").show();
-          }
+					if ($("#jsonButton").hasClass("active")) {
+						$("#imageOptions").hide();
+					} else {
+						$("#imageOptions").show();
+					}
 
-          return false;
-        });
+					return false;
+				});
 
-        // wire styled button to hidden file input
-        $("#fileMock").click(function () {
-          $("#file").click();
-        });
+				// wire styled button to hidden file input
+				$("#fileMock").click(function () {
+					$("#file").click();
+				});
 
-        // grab the filename when a file is selected
-        $("#file").change(function () {
-          var path = $(this).val().replace(/\\/g, "/");
-          var parts = path.split("/");
-          var filename = parts.pop();
-          $("#fileName").val(filename);
-        });
-      };
+				// grab the filename when a file is selected
+				$("#file").change(function () {
+					var path = $(this).val().replace(/\\/g, "/");
+					var parts = path.split("/");
+					var filename = parts.pop();
+					$("#fileName").val(filename);
+				});
+			};
 
-      var setupCamera = function () {
-        const video = document.getElementById("camera");
-        const canvas = document.getElementById("cameraCanvas");
-        const captureButton = document.getElementById("captureButton");
+			var setupCamera = function () {
+				const video = document.getElementById("camera");
+				const canvas = document.getElementById("cameraCanvas");
+				const captureButton = document.getElementById("captureButton");
 
-        $("#cameraButton").click(function () {
-          $("#fileSelectionContainer").hide();
-          $("#urlContainer").hide();
-          $("#cameraContainer").show();
-          navigator.mediaDevices
-            .getUserMedia({ video: true })
-            .then((stream) => {
-              video.srcObject = stream;
-            })
-            .catch((err) => {
-              console.error("Error accessing camera: ", err);
-            });
-        });
+				$("#cameraButton").click(function () {
+					$("#fileSelectionContainer").hide();
+					$("#urlContainer").hide();
+					$("#cameraContainer").show();
+					navigator.mediaDevices
+						.getUserMedia({ video: true })
+						.then((stream) => {
+							video.srcObject = stream;
+						})
+						.catch((err) => {
+							console.error("Error accessing camera: ", err);
+						});
+				});
 
-        captureButton.addEventListener("click", function () {
-          const context = canvas.getContext("2d");
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const dataUrl = canvas.toDataURL("image/jpeg");
-          getBase64fromFile(dataUrl).then(function (base64image) {
-            $("#fileName").val("captured_image.jpg");
-            $("#file").data("base64", base64image);
-          });
-        });
-      };
+				captureButton.addEventListener("click", function () {
+					const context = canvas.getContext("2d", {
+						willReadFrequently: true,
+					});
+					canvas.width = video.videoWidth;
+					canvas.height = video.videoHeight;
+					context.drawImage(video, 0, 0, canvas.width, canvas.height);
+					const dataUrl = canvas.toDataURL("image/jpeg");
+					getBase64fromFile(dataUrl).then(function (base64image) {
+						$("#fileName").val("captured_image.jpg");
+						$("#file").data("base64", base64image);
+					});
+				});
+			};
 
-      var getSettingsFromForm = function (cb) {
-        var settings = {
-          method: "POST",
-        };
+			var getSettingsFromForm = function (cb) {
+				var settings = {
+					method: "POST",
+				};
 
-        var parts = [
-          "https://detect.roboflow.com/",
-          $("#model").val(),
-          "/",
-          $("#version").val(),
-          "?api_key=" + $("#api_key").val(),
-        ];
+				var parts = [
+					"https://detect.roboflow.com/",
+					$("#model").val(),
+					"/",
+					$("#version").val(),
+					"?api_key=" + $("#api_key").val(),
+				];
 
-        var classes = $("#classes").val();
-        if (classes) parts.push("&classes=" + classes);
+				var classes = $("#classes").val();
+				if (classes) parts.push("&classes=" + classes);
 
-        var confidence = $("#confidence").val();
-        if (confidence) parts.push("&confidence=" + confidence);
+				var confidence = $("#confidence").val();
+				if (confidence) parts.push("&confidence=" + confidence);
 
-        var overlap = $("#overlap").val();
-        if (overlap) parts.push("&overlap=" + overlap);
+				var overlap = $("#overlap").val();
+				if (overlap) parts.push("&overlap=" + overlap);
 
-        var format = $("#format .active").attr("data-value");
-        parts.push("&format=" + format);
-        settings.format = format;
+				var format = $("#format .active").attr("data-value");
+				parts.push("&format=" + format);
+				settings.format = format;
 
-        if (format == "image") {
-          var labels = $("#labels .active").attr("data-value");
-          if (labels) parts.push("&labels=on");
+				if (format == "image") {
+					var labels = $("#labels .active").attr("data-value");
+					if (labels) parts.push("&labels=on");
 
-          var stroke = $("#stroke .active").attr("data-value");
-          if (stroke) parts.push("&stroke=" + stroke);
+					var stroke = $("#stroke .active").attr("data-value");
+					if (stroke) parts.push("&stroke=" + stroke);
 
-          settings.xhr = function () {
-            var override = new XMLHttpRequest();
-            override.responseType = "arraybuffer";
-            return override;
-          };
-        }
+					settings.xhr = function () {
+						var override = new XMLHttpRequest();
+						override.responseType = "arraybuffer";
+						return override;
+					};
+				}
 
-        var method = $("#method .active").attr("data-value");
-        if (method == "upload") {
-          var file = $("#file").get(0).files && $("#file").get(0).files.item(0);
-          if (!file) return alert("請選擇一個檔案。");
+				var method = $("#method .active").attr("data-value");
+				if (method == "upload") {
+					var file =
+						$("#file").get(0).files &&
+						$("#file").get(0).files.item(0);
+					if (!file) return alert("請選擇一個檔案。");
 
-          // 檢查檔案格式
-          var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
-          if (!allowedExtensions.exec(file.name)) {
-            return alert("僅允許上傳 jpg 或 png 格式的檔案。");
-          }
+					// 檢查檔案格式
+					var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+					if (!allowedExtensions.exec(file.name)) {
+						return alert("僅允許上傳 jpg 或 png 格式的檔案。");
+					}
 
-          getBase64fromFile(file).then(function (base64image) {
-            settings.url = parts.join("");
-            settings.data = base64image;
+					getBase64fromFile(file).then(function (base64image) {
+						settings.url = parts.join("");
+						settings.data = base64image;
 
-            console.log(settings);
-            cb(settings);
-          });
-        } else if (method == "camera") {
-          var base64image = $("#file").data("base64");
-          if (!base64image) return alert("請拍攝一張圖片。");
+						console.log(settings);
+						cb(settings);
+					});
+				} else if (method == "camera") {
+					var base64image = $("#file").data("base64");
+					if (!base64image) return alert("請拍攝一張圖片。");
 
-          settings.url = parts.join("");
-          settings.data = base64image;
+					settings.url = parts.join("");
+					settings.data = base64image;
 
-          console.log(settings);
-          cb(settings);
-        } else {
-          var url = $("#url").val();
-          if (!url) return alert("請輸入圖片 URL");
+					console.log(settings);
+					cb(settings);
+				} else {
+					var url = $("#url").val();
+					if (!url) return alert("請輸入圖片 URL");
 
-          parts.push("&image=" + encodeURIComponent(url));
+					parts.push("&image=" + encodeURIComponent(url));
 
-          settings.url = parts.join("");
-          console.log(settings);
-          cb(settings);
-        }
-      };
+					settings.url = parts.join("");
+					console.log(settings);
+					cb(settings);
+				}
+			};
 
-      var getBase64fromFile = function (file) {
-        return new Promise(function (resolve, reject) {
-          var reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = function () {
-            resizeImage(reader.result).then(function (resizedImage) {
-              resolve(resizedImage);
-            });
-          };
-          reader.onerror = function (error) {
-            reject(error);
-          };
-        });
-      };
+			var getBase64fromFile = function (file) {
+				return new Promise(function (resolve, reject) {
+					var reader = new FileReader();
+					reader.readAsDataURL(file);
+					reader.onload = function () {
+						resizeImage(reader.result).then(function (
+							resizedImage
+						) {
+							resolve(resizedImage);
+						});
+					};
+					reader.onerror = function (error) {
+						reject(error);
+					};
+				});
+			};
 
-      var resizeImage = function (base64Str) {
-        return new Promise(function (resolve, reject) {
-          var img = new Image();
-          img.src = base64Str;
-          img.onload = function () {
-            var canvas = document.createElement("canvas");
-            var MAX_WIDTH = 1500;
-            var MAX_HEIGHT = 1500;
-            var width = img.width;
-            var height = img.height;
-            if (width > height) {
-              if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
-              }
-            } else {
-              if (height > MAX_HEIGHT) {
-                width *= MAX_HEIGHT / height;
-                height = MAX_HEIGHT;
-              }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL("image/jpeg", 1.0));
-          };
-        });
-      };
-    </script>
+			var resizeImage = function (base64Str) {
+				return new Promise(function (resolve, reject) {
+					var img = new Image();
+					img.src = base64Str;
+					img.onload = function () {
+						var canvas = document.createElement("canvas");
+						var MAX_WIDTH = 1500;
+						var MAX_HEIGHT = 1500;
+						var width = img.width;
+						var height = img.height;
+						if (width > height) {
+							if (width > MAX_WIDTH) {
+								height *= MAX_WIDTH / width;
+								width = MAX_WIDTH;
+							}
+						} else {
+							if (height > MAX_HEIGHT) {
+								width *= MAX_HEIGHT / height;
+								height = MAX_HEIGHT;
+							}
+						}
+						canvas.width = width;
+						canvas.height = height;
+						var ctx = canvas.getContext("2d", {
+							willReadFrequently: true,
+						});
+						ctx.drawImage(img, 0, 0, width, height);
+						resolve(canvas.toDataURL("image/jpeg", 1.0));
+					};
+				});
+			};
+		</script>
 
-    <style>
-      #codepenLink {
-        display: none;
-      }
-    </style>
-  </body>
+		<style>
+			#codepenLink {
+				display: none;
+			}
+		</style>
+	</body>
 </html>

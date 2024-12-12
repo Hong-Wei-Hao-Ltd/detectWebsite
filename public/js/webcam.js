@@ -14,7 +14,7 @@ let drawInterval = null;
  * 繪製影像到畫布
  */
 function drawVideoFrame(videoElement, canvasElement, flip = false) {
-  const context = canvasElement.getContext("2d");
+  const context = canvasElement.getContext("2d", { willReadFrequently: true });
   if (flip) {
     context.save();
     context.scale(-1, 1);
@@ -41,7 +41,7 @@ function drawVideoFrame(videoElement, canvasElement, flip = false) {
  * 使用 requestAnimationFrame 繪製影像
  */
 function drawVideoFrameWithRAF(videoElement, canvasElement, flip = false) {
-  const context = canvasElement.getContext("2d");
+  const context = canvasElement.getContext("2d", { willReadFrequently: true });
 
   function draw() {
     if (flip) {
@@ -75,7 +75,7 @@ function drawVideoFrameWithRAF(videoElement, canvasElement, flip = false) {
  */
 function captureImage(videoElement) {
   const canvas = document.getElementById("main-canvas");
-  const context = canvas.getContext("2d");
+  const context = canvas.getContext("2d", { willReadFrequently: true });
   canvas.width = videoElement.videoWidth;
   canvas.height = videoElement.videoHeight;
   context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
