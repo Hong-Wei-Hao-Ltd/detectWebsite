@@ -267,7 +267,7 @@ var getSettingsFromForm = function (cb) {
         settings.url = parts.join("");
         settings.data = base64image;
 
-        console.log(settings);
+        console.debug(settings);
         cb(settings);
       })
       .catch(function (error) {
