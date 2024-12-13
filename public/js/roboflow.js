@@ -4,7 +4,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   //values pulled from query string
   document.getElementById("model").value = "resistance-eg6us";
-  document.getElementById("version").value = "3";
+  document.getElementById("version").value = "5";
   document.getElementById("api_key").value = "UB9aRpCvDKvf0BkR3BGd";
 
   setupButtonListeners();
