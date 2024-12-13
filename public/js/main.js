@@ -337,6 +337,7 @@ function updateSubmitButtonState() {
   } else {
     submitButton.disabled = false;
     previewMessage.style.display = 'none';
+    previewMessage.innerHTML = "";
     stepG1.classList.remove("rounded", "border", "border-danger");
   }
 }
