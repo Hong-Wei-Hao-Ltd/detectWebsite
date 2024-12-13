@@ -26,7 +26,7 @@
     {
         "id": 3,
         "name": "範例3",
-        "description": "眶電阻這事真坐牢",
+        "description": "框電阻這事真坐牢",
         "url": "./../../public/images/data/IMG_4572.jpg",
         "colors": [
             "brown",
@@ -50,7 +50,7 @@
     {
         "id": 5,
         "name": "範例5",
-        "description": "每天回家類如狗",
+        "description": "每天回家累如狗",
         "url": "./../../public/images/data/IMG_20241105_145301_1.jpg",
         "colors": [
             "brown",
