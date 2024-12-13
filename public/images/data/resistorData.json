@@ -2,13 +2,73 @@
     {
         "id": 1,
         "name": "範例1",
-        "description": "生活將我擊倒，發現躺著比站著舒服",
-        "url": "./../../public/images/data/IMG_20241105_145020_1.jpg"
+        "description": "吾友蹲坑致使腳麻",
+        "url": "./../../public/images/data/IMG_2845.jpg",
+        "colors": [
+            "green",
+            "brown",
+            "orange",
+            "gold"
+        ]
     },
     {
         "id": 2,
         "name": "範例2",
-        "description": "動不了的電阻宛如待宰羔羊等著被測",
-        "url": "./../../public/images/data/IMG_20241105_145029_1.jpg"
+        "description": "友如廁亂他真的爽",
+        "url": "./../../public/images/data/IMG_2858.jpg",
+        "colors": [
+            "brown",
+            "green",
+            "red",
+            "gold"
+        ]
+    },
+    {
+        "id": 3,
+        "name": "範例3",
+        "description": "眶電阻這事真坐牢",
+        "url": "./../../public/images/data/IMG_4572.jpg",
+        "colors": [
+            "brown",
+            "black",
+            "red",
+            "gold"
+        ]
+    },
+    {
+        "id": 4,
+        "name": "範例4",
+        "description": "半小時只能搞",
+        "url": "./../../public/images/data/IMG_20241105_132702_1.jpg",
+        "colors": [
+            "brown",
+            "black",
+            "orange",
+            "gold"
+        ]
+    },
+    {
+        "id": 5,
+        "name": "範例5",
+        "description": "",
+        "url": "./../../public/images/data/IMG_20241105_145301_1.jpg",
+        "colors": [
+            "brown",
+            "black",
+            "orange",
+            "gold"
+        ]
+    },
+    {
+        "id": 6,
+        "name": "範例6",
+        "description": "",
+        "url": "./../../public/images/data/IMG_20241122_145148_1",
+        "colors": [
+            "brown",
+            "green",
+            "red",
+            "gold"
+        ]
     }
 ]

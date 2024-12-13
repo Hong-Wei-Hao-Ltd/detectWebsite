@@ -49,9 +49,11 @@ var infer = function () {
 
   document.getElementById("output").innerHTML = "運算中...";
   document.getElementById("resultContainer").style.display = "block";
+  document.getElementById("errorMsg").style.display = "none";
+
 
   getSettingsFromForm(function (settings) {
-    settings.error = function (xhr) {
+    settings.error = function (_xhr) {
       console.debug("推理失敗");
       clearInterval(timerInterval);
       document.getElementById("output").innerHTML = [
@@ -140,6 +142,11 @@ var infer = function () {
           document.getElementById("output").innerHTML = "";
           document.getElementById("output").appendChild(img);
         }
+
+        if (response.message) {
+          throw new Error(response.message);
+        }
+
         drawExp(response);
         console.debug("推理完成");
         submitButton.disabled = false;
@@ -148,7 +155,11 @@ var infer = function () {
       .catch((error) => {
         console.debug("推理過程中出錯");
         clearInterval(timerInterval);
+        console.error(error);
         settings.error(error);
+        document.getElementById("errorMsg").style.display = "block";
+        document.getElementById("errorMsgContent").textContent = error.message;
+        // alert(("推理過程中出錯：" + error.message) || error);
         submitButton.disabled = false;
         submitButton.innerHTML = runButton.RUN;
       });

@@ -2,6 +2,7 @@
  * 主要程式代碼
  */
 var debugMode = false;
+var resistorData = [];
 document.addEventListener("DOMContentLoaded", function () {
   const startWebcamButton = document.getElementById("start-webcam");
   /**
@@ -69,6 +70,33 @@ document.addEventListener("DOMContentLoaded", function () {
     radio.addEventListener("change", updateInputDisplay);
   });
 
+  // 檢查檔案大小並壓縮圖片
+  function checkAndCompressImage(file, maxSizeKB, callback) {
+    const maxSizeBytes = maxSizeKB * 1024;
+    if (file.size <= maxSizeBytes) {
+      callback(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const scale = Math.sqrt(maxSizeBytes / file.size);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function (blob) {
+          callback(blob);
+        }, file.type, 0.95);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   if (inputTypeElement) {
     inputTypeElement.addEventListener("change", updateInputDisplay);
   }
@@ -81,11 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (file.type === "image/heic" || file.type === "image/heif") {
         convertHeicToJpeg(file).then(displayImage);
       } else if (file.type === "image/png" || file.type === "image/jpeg") {
-        let reader = new FileReader();
-        reader.onload = function (event) {
-          displayImage(event.target.result);
-        };
-        reader.readAsDataURL(file);
+        checkAndCompressImage(file, 2048, function (compressedFile) {
+          let reader = new FileReader();
+          reader.onload = function (event) {
+            displayImage(event.target.result);
+          };
+          reader.readAsDataURL(compressedFile);
+        });
       } else {
         alert("只允許上傳 PNG 或 JPEG 檔案");
         e.target.value = "";
@@ -152,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // window.getAndDisplayDevices();
 
   // 顯示結果於新分頁
+  document.getElementById("errorMsg").style.display = "none";
   document.getElementById('open-new-tab').style.display = 'none';
   document.getElementById('open-new-tab').addEventListener('click', function () {
     const canvas = document.getElementById('result-canvas');
@@ -214,6 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </a>`;
         resistorExamples.appendChild(option);
       });
+      resistorData = data;
     });
 
   document.getElementById('resistor-examples').addEventListener('change', function () {
