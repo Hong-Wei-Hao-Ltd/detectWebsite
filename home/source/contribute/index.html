@@ -20,6 +20,17 @@
 				scroll-margin-top: 75px;
 			}
 		</style>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				if (window.location.pathname.endsWith("index.html")) {
+					window.history.replaceState(
+						{},
+						document.title,
+						window.location.pathname.replace("index.html", "")
+					);
+				}
+			});
+		</script>
 	</head>
 	<body class="bg-body" data-bs-theme="light">
 		<!-- 頁首 -->
