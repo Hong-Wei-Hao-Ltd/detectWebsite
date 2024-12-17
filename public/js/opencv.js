@@ -9,19 +9,6 @@ function onOpenCvReady() {
     // drawExp(response);
 }
 
-function detectColor(hsv) {
-    console.debug("檢測顏色的 HSV 值:", hsv);
-    for (const [color, range] of Object.entries(COLOR_RANGES)) {
-        const [hMin, sMin, vMin, hMax, sMax, vMax] = range;
-        if (hsv[0] >= hMin && hsv[0] <= hMax && hsv[1] >= sMin && hsv[1] <= sMax && hsv[2] >= vMin && hsv[2] <= vMax) {
-            console.debug("檢測到的顏色:", color);
-            return color;
-        }
-    }
-    console.debug("未檢測到顏色");
-    return null;
-}
-
 function drawExp(response) {
     console.debug("開始 drawExp 函數");
 
@@ -82,46 +69,24 @@ function drawExp(response) {
 
                             // 提取色環區塊的圖像數據
                             const imageData = ctx.getImageData(px - pwidth / 2, py - pheight / 2, pwidth, pheight);
-                            const data = imageData.data;
 
-                            // 將圖像數據轉換為灰階圖像
-                            const grayImage = new cv.Mat();
-                            const src = cv.matFromImageData(imageData);
-                            cv.cvtColor(src, grayImage, cv.COLOR_RGBA2GRAY, 0);
+                            // #region 處理色環區塊的圖像數據
 
-                            // 顯示灰階圖像
-                            displayStepImage(grayImage, 'Gray Image');
-
-                            // 使用Canny邊緣檢測
-                            const edges = new cv.Mat();
-                            cv.Canny(grayImage, edges, 30, 150);
-
-                            // 顯示邊緣檢測結果
-                            displayStepImage(edges, 'Edges');
-
-                            // 計算邊緣區域的平均顏色
-                            let r = 0, g = 0, b = 0, count = 0;
-                            for (let i = 0; i < data.length; i += 4) {
-                                if (edges.data[i / 4] > 0) { // 只考慮邊緣區域
-                                    r += data[i];
-                                    g += data[i + 1];
-                                    b += data[i + 2];
-                                    count++;
-                                }
-                            }
-                            r = Math.floor(r / count);
-                            g = Math.floor(g / count);
-                            b = Math.floor(b / count);
-
-                            // 釋放內存
-                            src.delete();
-                            grayImage.delete();
-                            edges.delete();
-
+                            // 主要處理
+                            const { r, g, b } = getKmeansColor(imageData);
                             console.debug("平均 RGB 顏色:", { r, g, b });
 
                             const hsv = rgbToHsv(r, g, b);
-                            const color = window.expDemo ? resistorData.find(d => d.id == window.expDemoId).colors[prediction.class_id] : detectColor(hsv);
+                            if (isNaN(hsv[0]) || isNaN(hsv[1]) || isNaN(hsv[2])) {
+                                console.error("無效的 HSV 值:", hsv);
+                                return;
+                            }
+
+                            // #endregion
+
+                            const color = window.expDemo
+                                ? resistorData.find(d => d.id == window.expDemoId).colors[prediction.class_id]
+                                : detectColor(hsv);
 
                             if (color) {
                                 prediction.color = color;
