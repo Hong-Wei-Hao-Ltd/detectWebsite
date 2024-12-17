@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "範例1",
-        "description": "吾友蹲坑致使腳麻",
+        "description": "",
         "url": "./../../public/images/data/IMG_2845.jpg",
         "colors": [
             "green",
@@ -14,7 +14,7 @@
     {
         "id": 2,
         "name": "範例2",
-        "description": "友如廁亂他真的爽",
+        "description": "",
         "url": "./../../public/images/data/IMG_2858.jpg",
         "colors": [
             "brown",
@@ -26,7 +26,7 @@
     {
         "id": 3,
         "name": "範例3",
-        "description": "框電阻這事真坐牢",
+        "description": "",
         "url": "./../../public/images/data/IMG_4572.jpg",
         "colors": [
             "brown",
@@ -38,7 +38,7 @@
     {
         "id": 4,
         "name": "範例4",
-        "description": "半小時只能搞十張",
+        "description": "",
         "url": "./../../public/images/data/IMG_20241105_132702_1.jpg",
         "colors": [
             "brown",
@@ -50,7 +50,7 @@
     {
         "id": 5,
         "name": "範例5",
-        "description": "每天回家累如狗",
+        "description": "",
         "url": "./../../public/images/data/IMG_20241105_145301_1.jpg",
         "colors": [
             "brown",
@@ -62,7 +62,7 @@
     {
         "id": 6,
         "name": "範例6",
-        "description": "求求你們評高一點吧",
+        "description": "",
         "url": "./../../public/images/data/IMG_20241122_145148_1",
         "colors": [
             "brown",
