@@ -109,9 +109,9 @@ function drawExp(response) {
                     }
                 });
 
-                // 顯示電阻的4個顏色並且標示上去
+                // 顯示電阻的4個顏色標示
                 const sortedPredictions = uniquePredictions.sort((a, b) => a.class_id - b.class_id);
-                let colorText = sortedPredictions.map(prediction => prediction.color).join(' ');
+                // let colorText = sortedPredictions.map(prediction => prediction.color).join(' ');
 
                 // 計算電阻值
                 const firstBand = sortedPredictions.find(prediction => prediction.class_id === 0);
@@ -122,6 +122,7 @@ function drawExp(response) {
                 if (firstBand && secondBand && multiplier && tolerance) {
                     let resistanceValue = (COLOR_CODES[firstBand.color] * 10 + COLOR_CODES[secondBand.color]) * Math.pow(10, COLOR_CODES[multiplier.color]);
                     const toleranceValue = TOLERANCE_VALUES[tolerance.color];
+                    const confidence = Math.round(Math.min(...sortedPredictions.map(prediction => prediction.confidence)) * 100) + "%";
 
                     // 檢測是否無法計算
                     if (Number.isNaN(resistanceValue) || toleranceValue === undefined) {
@@ -161,10 +162,20 @@ function drawExp(response) {
                         resultText.appendChild(resistanceElement);
                     }
                     if (document.getElementById('showLabel').checked && resistanceValue != -1) {
-                        ctx.fillStyle = 'black';
                         ctx.font = '16px Arial';
-                        ctx.fillText(colorText, x - width / 2, y - height / 2 - 10);
-                        ctx.fillText(resistanceText, x - width / 2, y - height / 2 - 30);
+                        ctx.textBaseline = 'top';
+
+                        let confidenceTextWidth = ctx.measureText(confidence).width;
+                        let resistanceTextWidth = ctx.measureText(resistanceText).width;
+                        let textHeight = 16;
+
+                        ctx.fillStyle = "blue";
+                        ctx.fillRect(x - width / 2, y - height / 2 - 10 - textHeight / 2, resistanceTextWidth + 10, textHeight + 5);
+                        ctx.fillRect(x - width / 2, y - height / 2 - 30 - textHeight / 2, confidenceTextWidth + 10, textHeight + 5);
+
+                        ctx.fillStyle = "white";
+                        ctx.fillText(resistanceText, x - width / 2 + 5, y - height / 2 - 15);
+                        ctx.fillText(confidence, x - width / 2 + 5, y - height / 2 - 35);
 
                     }
                 }
