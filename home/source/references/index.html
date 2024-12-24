@@ -19,6 +19,28 @@
 			[id] {
 				scroll-margin-top: 75px;
 			}
+
+			::-webkit-scrollbar {
+				width: 12px;
+			}
+
+			::-webkit-scrollbar-track {
+				background: transparent; /* 初始隱藏 */
+			}
+
+			::-webkit-scrollbar-thumb {
+				background: #888;
+				border-radius: 6px;
+			}
+
+			::-webkit-scrollbar-thumb:hover {
+				background: #555;
+				border-radius: 6px;
+			}
+
+			body:hover ::-webkit-scrollbar-track {
+				background: #f1f1f1;
+			}
 		</style>
 		<script>
 			document.addEventListener("DOMContentLoaded", function () {
@@ -119,8 +141,7 @@
 						>
 					</div>
 					<div class="text-center col col-lg-3">
-						<a href="../contribute/" target="_self"
-							>特別感謝</a
+						<a href="../contribute/" target="_self">特別感謝</a
 						>這些人的幫助。
 					</div>
 					<div class="text-center col-lg-auto">

@@ -40,6 +40,28 @@
 			[id] {
 				scroll-margin-top: 75px;
 			}
+
+			::-webkit-scrollbar {
+				width: 12px;
+			}
+
+			::-webkit-scrollbar-track {
+				background: transparent; /* 初始隱藏 */
+			}
+
+			::-webkit-scrollbar-thumb {
+				background: #888;
+				border-radius: 6px;
+			}
+
+			::-webkit-scrollbar-thumb:hover {
+				background: #555;
+				border-radius: 6px;
+			}
+
+			body:hover ::-webkit-scrollbar-track {
+				background: #f1f1f1;
+			}
 		</style>
 	</head>
 
