@@ -73,16 +73,20 @@ function drawExp(response) {
                             // #region 處理色環區塊的圖像數據
 
                             // 主要處理
-                            const { r, g, b } = getKmeansColor(imageData);
-                            console.debug("平均 RGB 顏色:", { r, g, b });
+                            let hsv;
+                            try {
+                                const { r, g, b } = getKmeansColor(imageData);
+                                console.debug("平均 RGB 顏色:", { r, g, b });
 
-                            const hsv = rgbToHsv(r, g, b);
-                            if (isNaN(hsv[0]) || isNaN(hsv[1]) || isNaN(hsv[2])) {
+                                hsv = rgbToHsv(r, g, b);
+                            } catch (_) {
+                                console.error("無法處理色環區塊的圖像數據");
+                            }
+
+                            if ((isNaN(hsv[0]) || isNaN(hsv[1]) || isNaN(hsv[2])) && !window.expDemo) {
                                 console.error("無效的 HSV 值:", hsv);
                                 return;
                             }
-
-                            // #endregion
 
                             const color = window.expDemo
                                 ? resistorData.find(d => d.id == window.expDemoId).colors[prediction.class_id]
@@ -92,6 +96,7 @@ function drawExp(response) {
                                 prediction.color = color;
                                 console.debug("預測顏色:", { color });
                             }
+                            // #endregion
 
                             resistor.predictions.push(prediction);
                         }
