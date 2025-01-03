@@ -81,6 +81,7 @@ function drawExp(response) {
                                 hsv = rgbToHsv(r, g, b);
                             } catch (_) {
                                 console.error("無法處理色環區塊的圖像數據");
+                                hsv = [NaN, NaN, NaN];
                             }
 
                             if ((isNaN(hsv[0]) || isNaN(hsv[1]) || isNaN(hsv[2])) && !window.expDemo) {
